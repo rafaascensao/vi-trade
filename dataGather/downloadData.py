@@ -82,9 +82,59 @@ def requestAllCountriesExportations(codes):
         print("")
 
 
+def requestGroupOfCountries(country,countries):
+    printProgressBar(0,numberCountries, prefix='\Requesting '+country+' exports' , suffix='  0 of '+str(numberCountries-1), length=15)
+    i=0
+    for partner in countries.items():
+        if partner[1][0] == country:
+            continue
+        printProgressBar(i+1,numberCountries, prefix='\Requesting '+country+' exports' , suffix=' ['+partner[1][0]+']  '+str(i+1)+' of '+str(numberCountries-1), length=15)
+        requestCSV(country,partner[1][0],str(fromYear),str(toYear),'Export',indicator)
+        i += 1
+    print("")
+
+def codesToList(codes):
+    codesList = []
+    for key in codes.items():
+        codesList.append(key[1][0])
+    return sorted(codesList)
+
+def retrieveListofCodes(countrylist,countries):
+    print("\n\n------------------------------------------------------------------")
+    print(    "--- Requesting Specific Country Exportations ["+countrylist[0]+"] to ["+countrylist[len(countrylist)-1]+"]   ---")
+    print(    "------------------------------------------------------------------")
+    print(    "     Writing to ["+countrylist[0]+"]_["+countrylist[len(countrylist)-1]+"].log")
+    createLogFile("["+countrylist[0]+"]_["+countrylist[len(countrylist)-1]+"].log")
+    for code in countrylist:
+        requestGroupOfCountries(code,countries)
+        writeLogFile(code,"["+countrylist[0]+"]_["+countrylist[len(countrylist)-1]+"].log")
+    filename.close()
+
+def createLogFile(name):
+    f = open(name,"w+")
+    f.close()
+
+def writeLogFile(country,filename):
+    f = open(filename,"a+")
+    f.write("["+country+"] Complete\n")
+    f.close()
+
 
 numberCountries = getNumberCountries('countryCodes.csv')
 print("Number of countries: ",numberCountries)
 countryCodes = generateCountryCodes('countryCodes.csv')
+listCodes = codesToList(countryCodes)
+#requestAllCountriesExportations(countryCodes)
 
-requestAllCountriesExportations(countryCodes)
+
+### RETRIEVING 10 BY 10 COUNTRIES BY ALPHABETICAL ORDER ####
+
+retrieveListofCodes(listCodes[:10],countryCodes)
+retrieveListofCodes(listCodes[11:20],countryCodes)
+retrieveListofCodes(listCodes[21:30],countryCodes)
+retrieveListofCodes(listCodes[31:40],countryCodes)
+retrieveListofCodes(listCodes[41:50],countryCodes)
+retrieveListofCodes(listCodes[51:60],countryCodes)
+retrieveListofCodes(listCodes[61:70],countryCodes)
+retrieveListofCodes(listCodes[71:80],countryCodes)
+retrieveListofCodes(listCodes[81:90],countryCodes)
