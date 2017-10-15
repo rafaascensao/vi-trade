@@ -126,7 +126,6 @@ countryCodes = generateCountryCodes('countryCodes.csv')
 listCodes = codesToList(countryCodes)
 #requestAllCountriesExportations(countryCodes)
 
-
 ### RETRIEVING 10 BY 10 COUNTRIES BY ALPHABETICAL ORDER ####
 
 retrieveListofCodes(listCodes[:10],countryCodes)
