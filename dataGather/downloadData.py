@@ -61,7 +61,11 @@ def requestCSV(reporter, partner, startYear, endYear, tradeFlow, indicator):
     url += indicator + '&Partner='
     url += partner + '&Product=all-groups&Type=ProductTimeseries&Lang=en'
     outName = 'dataset/'+reporter+'_'+partner+'_'+tradeFlow+'.xlsx'
-    urllib.request.urlretrieve(url,outName)
+    try:
+        urllib.request.urlretrieve(url,outName)
+    except:
+        print("Error retrieving url, trying again...")
+        requestCSV(reported,partner,startYear,endYear,tradeFlow,indicator)
 
 #req = urllib.request.urlretrieve('http://wits.worldbank.org/Download.aspx?Reporter=ESP&StartYear=#1989&EndYear=2015&Tradeflow=Export&Indicator=XPRT-TRD-VL&Partner=LKA&Product=all-groups&Type=ProductTimeseries&Lang=en','test.xlsx')
 
