@@ -1,6 +1,6 @@
 import urllib.request
 import csv
-
+import _thread
 ######################################
 ###          GLOBAL VARS           ###
 ######################################
@@ -24,7 +24,7 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
         decimals    - Optional  : positive number of decimals in percent complete (Int)
         length      - Optional  : character length of bar (Int)
         fill        - Optional  : bar fill character (Str)
-    """
+
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
@@ -32,6 +32,7 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
     # Print New Line on Complete
     if iteration == total:
         print()
+    """
 
 def getNumberCountries(file):
     with open(file) as csvfile:
@@ -63,8 +64,8 @@ def requestCSV(reporter, partner, startYear, endYear, tradeFlow, indicator):
     outName = 'dataset/'+reporter+'_'+partner+'_'+tradeFlow+'.xlsx'
     try:
         urllib.request.urlretrieve(url,outName)
-    except:
-        print("Error retrieving url, trying again...")
+    except Exception as e:
+        print(e)
         requestCSV(reported,partner,startYear,endYear,tradeFlow,indicator)
 
 #req = urllib.request.urlretrieve('http://wits.worldbank.org/Download.aspx?Reporter=ESP&StartYear=#1989&EndYear=2015&Tradeflow=Export&Indicator=XPRT-TRD-VL&Partner=LKA&Product=all-groups&Type=ProductTimeseries&Lang=en','test.xlsx')
@@ -115,11 +116,11 @@ def retrieveListofCodes(countrylist,countries):
     filename.close()
 
 def createLogFile(name):
-    f = open(name,"w+")
+    f = open('logs/'+name,"w+")
     f.close()
 
 def writeLogFile(country,filename):
-    f = open(filename,"a+")
+    f = open('logs/'+filename,"a+")
     f.write("["+country+"] Complete\n")
     f.close()
 
@@ -131,7 +132,7 @@ listCodes = codesToList(countryCodes)
 #requestAllCountriesExportations(countryCodes)
 
 ### RETRIEVING 10 BY 10 COUNTRIES BY ALPHABETICAL ORDER ####
-
+"""
 retrieveListofCodes(listCodes[:10],countryCodes)
 retrieveListofCodes(listCodes[11:20],countryCodes)
 retrieveListofCodes(listCodes[21:30],countryCodes)
@@ -142,3 +143,22 @@ retrieveListofCodes(listCodes[61:70],countryCodes)
 retrieveListofCodes(listCodes[71:80],countryCodes)
 retrieveListofCodes(listCodes[81:90],countryCodes)
 retrieveListofCodes(listCodes[91:100],countryCodes)
+"""
+def retrieveListCodes(l,countryCodes):
+    retrieveListofCodes(l,countryCodes)
+
+def chunks(l,n):
+    for i in range(0,len(l),n):
+        yield l[i:i + n]
+    return l
+
+try:
+    chunk_size = 132
+    chunksList = list(chunks(listCodes,chunk_size))
+    for i in range(0,len(chunksList)):
+        _thread.start_new_thread( retrieveListCodes, (chunksList[i], countryCodes))
+except Exception as e:
+    print(e)
+
+while 1:
+    pass
