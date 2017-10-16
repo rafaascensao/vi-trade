@@ -1,2 +1,2 @@
-/dataGather/dataset
-/dataGather/logs
+/dataGather/dataset/*
+/dataGather/logs/*
