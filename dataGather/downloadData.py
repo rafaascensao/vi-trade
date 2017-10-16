@@ -6,8 +6,9 @@ import _thread
 ######################################
 fromYear = 1989
 toYear = 2015
-indicator = 'XPRT-TRD-VL'
+indicator = {'Export':'XPRT-TRD-VL','Import':'MPRT-TRD-VL'}
 numberCountries = 0
+tradeFlowState = 'Import'
 
 ######################################
 ###           FUNCTIONS            ###
@@ -59,7 +60,7 @@ def requestCSV(reporter, partner, startYear, endYear, tradeFlow, indicator):
     url += startYear + '&EndYear='
     url += endYear + '&Tradeflow='
     url += tradeFlow + '&Indicator='
-    url += indicator + '&Partner='
+    url += indicator[tradeFlow] + '&Partner='
     url += partner + '&Product=all-groups&Type=ProductTimeseries&Lang=en'
     outName = 'dataset/'+reporter+'_'+partner+'_'+tradeFlow+'.xlsx'
     try:
@@ -82,7 +83,7 @@ def requestAllCountriesExportations(codes):
             if partner == key:
                 continue
             printProgressBar(i+1,numberCountries, prefix='\Requesting '+key[1][0]+' exports' , suffix=' ['+partner[1][0]+']  '+str(i+1)+' of '+str(numberCountries-1), length=15)
-            requestCSV(key[1][0],partner[1][0],str(fromYear),str(toYear),'Export',indicator)
+            requestCSV(key[1][0],partner[1][0],str(fromYear),str(toYear),tradeFlowState,indicator)
             i += 1
         print("")
 
@@ -94,7 +95,7 @@ def requestGroupOfCountries(country,countries):
         if partner[1][0] == country:
             continue
         printProgressBar(i+1,numberCountries, prefix='\Requesting '+country+' exports' , suffix=' ['+partner[1][0]+']  '+str(i+1)+' of '+str(numberCountries-1), length=15)
-        requestCSV(country,partner[1][0],str(fromYear),str(toYear),'Export',indicator)
+        requestCSV(country,partner[1][0],str(fromYear),str(toYear),tradeFlowState,indicator)
         i += 1
     print("")
 
