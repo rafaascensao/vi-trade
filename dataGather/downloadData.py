@@ -1,13 +1,14 @@
 import urllib.request
 import csv
-
+import _thread
 ######################################
 ###          GLOBAL VARS           ###
 ######################################
 fromYear = 1989
 toYear = 2015
-indicator = 'XPRT-TRD-VL'
+indicator = {'Export':'XPRT-TRD-VL','Import':'MPRT-TRD-VL'}
 numberCountries = 0
+tradeFlowState = 'Import'
 
 ######################################
 ###           FUNCTIONS            ###
@@ -24,7 +25,7 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
         decimals    - Optional  : positive number of decimals in percent complete (Int)
         length      - Optional  : character length of bar (Int)
         fill        - Optional  : bar fill character (Str)
-    """
+
     percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
     filledLength = int(length * iteration // total)
     bar = fill * filledLength + '-' * (length - filledLength)
@@ -32,6 +33,7 @@ def printProgressBar (iteration, total, prefix = '', suffix = '', decimals = 1, 
     # Print New Line on Complete
     if iteration == total:
         print()
+    """
 
 def getNumberCountries(file):
     with open(file) as csvfile:
@@ -58,10 +60,14 @@ def requestCSV(reporter, partner, startYear, endYear, tradeFlow, indicator):
     url += startYear + '&EndYear='
     url += endYear + '&Tradeflow='
     url += tradeFlow + '&Indicator='
-    url += indicator + '&Partner='
+    url += indicator[tradeFlow] + '&Partner='
     url += partner + '&Product=all-groups&Type=ProductTimeseries&Lang=en'
     outName = 'dataset/'+reporter+'_'+partner+'_'+tradeFlow+'.xlsx'
-    urllib.request.urlretrieve(url,outName)
+    try:
+        urllib.request.urlretrieve(url,outName)
+    except Exception as e:
+        print(e)
+        requestCSV(reported,partner,startYear,endYear,tradeFlow,indicator)
 
 #req = urllib.request.urlretrieve('http://wits.worldbank.org/Download.aspx?Reporter=ESP&StartYear=#1989&EndYear=2015&Tradeflow=Export&Indicator=XPRT-TRD-VL&Partner=LKA&Product=all-groups&Type=ProductTimeseries&Lang=en','test.xlsx')
 
@@ -77,14 +83,83 @@ def requestAllCountriesExportations(codes):
             if partner == key:
                 continue
             printProgressBar(i+1,numberCountries, prefix='\Requesting '+key[1][0]+' exports' , suffix=' ['+partner[1][0]+']  '+str(i+1)+' of '+str(numberCountries-1), length=15)
-            requestCSV(key[1][0],partner[1][0],str(fromYear),str(toYear),'Export',indicator)
+            requestCSV(key[1][0],partner[1][0],str(fromYear),str(toYear),tradeFlowState,indicator)
             i += 1
         print("")
 
+
+def requestGroupOfCountries(country,countries):
+    printProgressBar(0,numberCountries, prefix='\Requesting '+country+' exports' , suffix='  0 of '+str(numberCountries-1), length=15)
+    i=0
+    for partner in countries.items():
+        if partner[1][0] == country:
+            continue
+        printProgressBar(i+1,numberCountries, prefix='\Requesting '+country+' exports' , suffix=' ['+partner[1][0]+']  '+str(i+1)+' of '+str(numberCountries-1), length=15)
+        requestCSV(country,partner[1][0],str(fromYear),str(toYear),tradeFlowState,indicator)
+        i += 1
+    print("")
+
+def codesToList(codes):
+    codesList = []
+    for key in codes.items():
+        codesList.append(key[1][0])
+    return sorted(codesList)
+
+def retrieveListofCodes(countrylist,countries):
+    print("\n\n------------------------------------------------------------------")
+    print(    "--- Requesting Specific Country Exportations ["+countrylist[0]+"] to ["+countrylist[len(countrylist)-1]+"]   ---")
+    print(    "------------------------------------------------------------------")
+    print(    "     Writing to ["+countrylist[0]+"]_["+countrylist[len(countrylist)-1]+"].log")
+    createLogFile("["+countrylist[0]+"]_["+countrylist[len(countrylist)-1]+"].log")
+    for code in countrylist:
+        requestGroupOfCountries(code,countries)
+        writeLogFile(code,"["+countrylist[0]+"]_["+countrylist[len(countrylist)-1]+"].log")
+    filename.close()
+
+def createLogFile(name):
+    f = open('logs/'+name,"w+")
+    f.close()
+
+def writeLogFile(country,filename):
+    f = open('logs/'+filename,"a+")
+    f.write("["+country+"] Complete\n")
+    f.close()
 
 
 numberCountries = getNumberCountries('countryCodes.csv')
 print("Number of countries: ",numberCountries)
 countryCodes = generateCountryCodes('countryCodes.csv')
+listCodes = codesToList(countryCodes)
+#requestAllCountriesExportations(countryCodes)
 
-requestAllCountriesExportations(countryCodes)
+### RETRIEVING 10 BY 10 COUNTRIES BY ALPHABETICAL ORDER ####
+"""
+retrieveListofCodes(listCodes[:10],countryCodes)
+retrieveListofCodes(listCodes[11:20],countryCodes)
+retrieveListofCodes(listCodes[21:30],countryCodes)
+retrieveListofCodes(listCodes[31:40],countryCodes)
+retrieveListofCodes(listCodes[41:50],countryCodes)
+retrieveListofCodes(listCodes[51:60],countryCodes)
+retrieveListofCodes(listCodes[61:70],countryCodes)
+retrieveListofCodes(listCodes[71:80],countryCodes)
+retrieveListofCodes(listCodes[81:90],countryCodes)
+retrieveListofCodes(listCodes[91:100],countryCodes)
+"""
+def retrieveListCodes(l,countryCodes):
+    retrieveListofCodes(l,countryCodes)
+
+def chunks(l,n):
+    for i in range(0,len(l),n):
+        yield l[i:i + n]
+    return l
+
+try:
+    chunk_size = 132
+    chunksList = list(chunks(listCodes,chunk_size))
+    for i in range(0,len(chunksList)):
+        _thread.start_new_thread( retrieveListCodes, (chunksList[i], countryCodes))
+except Exception as e:
+    print(e)
+
+while 1:
+    pass
