@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
 
   <!-- JS -->
+  <script src="assets/vendor/w3schools/w3.js"></script>
   <script src="assets/vendor/jquery/jquery-3.2.1.min.js"></script>
   <script src="assets/vendor/jquery/jquery-ui-1.12.1/jquery-ui.min.js"></script>
   <script src="assets/vendor/bootstrap/js/popper.js"></script>
@@ -26,8 +27,9 @@
 </head>
 
 <body>
+  <div class="loader"></div>
   <!-- HTML IS INCLUDED HERE (PREVENTS HTML SPAGHETTI) -->
-  <div id="container" style="position: relative; width: 90%;height:500px;margin:auto;margin-top:10px;"></div>
+  <div w3-include-html="modules/map.html"></div>
 
 
   <script src="assets/js/main.js"></script>
