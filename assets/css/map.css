@@ -2,10 +2,14 @@
   position: relative;
   width: 90%;
   border:solid 1px ;
-  border-radius: 10px;
   margin:auto;
   margin-top:10px;
   max-width: 1200px;
+}
+
+#map ,
+#map svg{
+  border-radius:10px;
 }
 
 
@@ -35,4 +39,9 @@ path.datamaps-arc {
   to {
     stroke-dashoffset: 1000;
   }
+}
+#map .arc {
+    transition: max-width 500ms ease-in-out, max-heiht 500ms ease-in-out;
+    max-width: 0;
+    max-height: 0;
 }
