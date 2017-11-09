@@ -27,25 +27,3 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
-
-
-
-#line {
-  width: 100%;
-  margin: 20px 0;
-  height: 300px;
-  background: #eee;
-}
-
-path.datamaps-arc {
-  stroke-dasharray: 10 !important;
-  animation: dash 20s linear infinite;
-  animation-direction: reverse;
-}
-
-@keyframes dash {
-  to {
-    stroke-dashoffset: 1000;
-  }
-}

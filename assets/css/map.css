@@ -1,0 +1,38 @@
+#map{
+  position: relative;
+  width: 90%;
+  border:solid 1px ;
+  border-radius: 10px;
+  margin:auto;
+  margin-top:10px;
+  max-width: 1200px;
+}
+
+
+/* Hover Box */
+#map .datamaps-hoverover .hoverinfo strong{
+/*  display: none;*/
+}
+
+
+
+/* Flow line */
+
+#line {
+  width: 100%;
+  margin: 20px 0;
+  height: 300px;
+  background: #eee;
+}
+
+path.datamaps-arc {
+  stroke-dasharray: 5 !important;
+  animation: dash 50s linear infinite;
+  animation-direction: reverse;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: 1000;
+  }
+}

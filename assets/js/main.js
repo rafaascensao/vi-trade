@@ -7,30 +7,30 @@ $(document).ready(function(){
   $('.loader').addClass('hidden')
 
 
-  var map = new Datamap({
+  countries_map = new Datamap({
+     scope:'world',
      element: document.getElementById('map'),
-     responsive: true
+     responsive: true,
+     //projection: 'mercator',
+     done: function(datamap) {
+           datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+               console.log(geography.properties.name);
+               console.log(geography)
+           });
+       }
    });
-   map.arc([{
-     origin: {
-       latitude: 61,
-       longitude: -149
-     },
-     destination: {
-       latitude: -22,
-       longitude: -43
+
+  countries_map.arc([{
+     origin: 'RUS',
+     destination: 'USA',
+     options: {
+       greatArc: true,
+       animationSpeed: 92000
      }
-   }], {
-     greatArc: true,
-     animationSpeed: 2000
-   });
+   }]);
 
 
   window.addEventListener('resize', function() {
     map.resize();
   });
-
-
-
-
 });
