@@ -1,3 +1,6 @@
+// Trade dataset
+var dataset;
+
 //Include html
 w3.includeHTML();
 
@@ -5,6 +8,7 @@ w3.includeHTML();
 $(document).ready(function(){
   //Removes loading
   $('.loader').addClass('hidden')
+  open();
 
 
   countries_map = new Datamap({
@@ -34,6 +38,7 @@ $(document).ready(function(){
                console.log(geography.properties.name);
                console.log(geography)
            });
+
 
        }
    });
@@ -72,4 +77,12 @@ newArcs = createOriginDestinationList(origin, destinations)
 /* ZOOM */
 function zoomToArea(area,scale){
   zoom.scale(scale).translate(area).event(countries_map.svg.selectAll("g"))
+}
+
+/* Open file and shit */
+function open(){
+  d3.csv("../../dataGather/exports.csv", function(data){
+    console.log(data[0]);
+    dataset = data;
+  })
 }
