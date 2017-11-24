@@ -2,6 +2,10 @@
   opacity:0;
   z-index: 0;
 }
+.cont{
+  position: relative;
+  width: 100%;
+}
 .loader {
   right: 50%;
   z-index: 1;
@@ -16,6 +20,14 @@
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
   transition: opacity 950ms ease-in-out, z-index 1500ms ease-in-out;
+}
+.timeline{
+  text-align: center;
+  margin: 0px;
+  padding: 0;
+}
+.row{
+  margin:0px;
 }
 
 @-webkit-keyframes spin {

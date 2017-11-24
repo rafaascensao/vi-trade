@@ -2,13 +2,14 @@
 var dataset;
 
 //Include html
-w3.includeHTML();
+w3.includeHTML(startViews);
 
 // MAIN INSIDE THIS FUNCTION ONLY
-$(document).ready(function(){
+function startViews(){
   //Removes loading
   $('.loader').addClass('hidden')
-  open();
+//  open();
+  startTimeline()
 
 
   countries_map = new Datamap({
@@ -48,7 +49,7 @@ $(document).ready(function(){
     countries_map.resize();
   });
   refreshArcs(countries_map, newArcs)
-});
+}
 
 
 /* ARCS */
@@ -85,4 +86,11 @@ function open(){
     console.log(data[0]);
     dataset = data;
   })
+}
+function startTimeline(){
+  $('.timeline .options p').click(toggleButtons);
+
+  function toggleButtons(){
+    $(this).parent().find('p').toggleClass('hidden-class')
+  }
 }

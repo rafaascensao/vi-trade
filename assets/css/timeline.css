@@ -1,0 +1,38 @@
+.timeline{
+
+}
+
+.timeline .buttons{
+  padding:0px;
+}
+.timeline .buttons .toggle-button{
+  width:50%;
+  float:left;
+  padding-top:10px;
+  padding-left: 5px;
+  padding-bottom: 10px;
+}
+.timeline .buttons .toggle-button:first-child{
+  padding-left: 30px;
+}
+.timeline .buttons .toggle-button .title{
+  float:left;
+}
+.timeline .buttons .toggle-button .options{
+  width:45%;
+  float:left;
+  text-align: left;
+}
+.timeline .buttons .toggle-button .options p{
+  overflow: hidden;
+  float: left;
+  width: 97%;
+  margin-bottom: 0px;
+  transition: max-width 350ms ease-in-out;
+  max-width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+.timeline .buttons .toggle-button .options p.hidden-class{
+  max-width: 0px;
+}

@@ -9,12 +9,16 @@
   <meta name="author" content="group23">
 
   <!-- CSS Rules -->
-  <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/vendor/jquery/jquery-ui-1.12.1/jquery-ui.min.css">
   <link rel="stylesheet" href="assets/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/main.css">
 
   <!-- MODULES CSS GOES HERE -->
   <link rel="stylesheet" href="assets/css/map.css">
+  <link rel="stylesheet" href="assets/css/bar_chart.css">
+  <link rel="stylesheet" href="assets/css/timeline.css">
+
+
 
   <!-- JS -->
   <script src="assets/vendor/w3schools/w3.js"></script>
@@ -31,10 +35,12 @@
 
 <body>
   <div class="loader"></div>
-  <!-- HTML IS INCLUDED HERE (PREVENTS HTML SPAGHETTI) -->
-  <div w3-include-html="modules/map.html"></div>
-
-
+  <div class="row">
+    <!-- HTML IS INCLUDED HERE (PREVENTS HTML SPAGHETTI) -->
+      <div class="col-md-12 timeline" w3-include-html="modules/timeline.html" ></div>
+      <div class="bar-chart_container col-md-4" w3-include-html="modules/bar-chart.html"></div>
+      <div class="map_container col-md-8" w3-include-html="modules/map.html"></div>
+  </div>
   <script src="assets/js/main.js"></script>
   <!-- MODULES SCRIPTS GOES HERE -->
 
