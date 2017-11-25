@@ -90,7 +90,27 @@ function open(){
 function startTimeline(){
   $('.timeline .options p').click(toggleButtons);
 
+  $( ".timeline .slider .slide" ).slider({
+      range: "max",
+      min: 1989,
+      max: 2015,
+      value: 2,
+      slide: function( event, ui ) {
+        $( "#amount" ).val( ui.value );
+      }
+    });
+    $('.timeline .slider .slide').append("<div class='left-slide'></div><div class='right-slide'></div>")
+    $( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );
+
+
+
+
+
+
+
   function toggleButtons(){
     $(this).parent().find('p').toggleClass('hidden-class')
   }
+
+
 }

@@ -36,3 +36,38 @@
 .timeline .buttons .toggle-button .options p.hidden-class{
   max-width: 0px;
 }
+.timeline .slider{
+  float:left;
+  position: relative;
+  height: 45px;
+}
+.timeline .slider .slide{
+  position: absolute;
+  width: 70%;
+  top: 50%;
+  left: 15%;
+  height: 0px;
+  border: solid 1px #333;
+  border-bottom: solid 2px;
+}
+.timeline .slider .slide .left-slide,
+.timeline .slider .slide .right-slide{
+  height: 21px;
+  background: black;
+  width: 3px;
+  top: -10px;
+  position: absolute;
+}
+.timeline .slider .slide .right-slide{
+  right:-3px;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default, .ui-button, html .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active{
+  border: 1px solid #c5c5c5;
+  background: #f6f6f6;
+  font-weight: normal;
+  color: #454545;
+  height: 15px;
+  width: 20px;
+  border: 3px solid #333;
+  top: -7px;
+}
