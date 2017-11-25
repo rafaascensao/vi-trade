@@ -27,7 +27,8 @@
   padding: 0;
 }
 .row{
-  margin:0px;
+  margin:auto;
+  max-width: 1600px;
 }
 
 @-webkit-keyframes spin {
