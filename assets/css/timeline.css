@@ -1,5 +1,5 @@
 .timeline{
-
+  padding-bottom: 30px;
 }
 
 .timeline .buttons{
@@ -70,4 +70,23 @@
   width: 20px;
   border: 3px solid #333;
   top: -7px;
+  outline-color: white !important;
+}
+.timeline .slider .slide .left-slide{
+  left: -1px;
+}
+.timeline .slider .slide span{
+  outline-color: none !important ;
+}
+.timeline .slider .slide span .year{
+  position: absolute;
+  left: -75%;
+  top:140%;
+  background: white ;
+  z-index: 1
+}
+.timeline .slider .slide .min-max-year{
+  position: absolute;
+  top: 20px;
+  left: -16px;
 }
