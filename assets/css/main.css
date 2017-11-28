@@ -1,6 +1,10 @@
-.loader.hidden{
+.loader.hidden,
+.row.hidden{
   opacity:0;
   z-index: 0;
+}
+.row{
+  transition: opacity 950ms ease-in-out, z-index 1500ms ease-in-out;
 }
 .cont{
   position: relative;
