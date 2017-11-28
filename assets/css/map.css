@@ -8,6 +8,7 @@
   border-radius: 10px;
   padding:0px;
   transition: width 250ms ease-in-out;
+  overflow-y: hidden;
 }
 
 #map ,
@@ -15,12 +16,40 @@
   border-radius:10px;
 }
 
-
+#bar-cloropleth{
+  border: solid 1px;
+  width: 400px;
+  position: absolute;
+  bottom: 2%;
+  right: 10%;
+}
+#bar-cloropleth > div{
+  width: 20%;
+  float: left;
+  border-right: solid 1px;
+  background: rgba(192,0,0,1);
+  height: 25px;
+}
+#bar-cloropleth > div:last-child{
+  border-right: 0px;
+}
 /* Hover Box */
 #map .datamaps-hoverover .hoverinfo strong{
 /*  display: none;*/
 }
 
+#bar-cloropleth > div:first-child{
+  background: #818182;
+}
+#bar-cloropleth > div:nth-child(2){
+  background: rgba(192,0,0,0.4);
+}
+#bar-cloropleth > div:nth-child(3){
+  background: rgba(192,0,0,0.6);
+}
+#bar-cloropleth > div:nth-child(4){
+  background: rgba(192,0,0,0.8);
+}
 
 
 /* Flow line */

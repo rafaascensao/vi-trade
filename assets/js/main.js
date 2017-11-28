@@ -28,7 +28,7 @@ function open(){
 }
 function startTimeline(){
   $('.timeline .options p').click(toggleButtons);
-
+  $('.description > div').click(selectProduct);
   $( ".timeline .slider .slide" ).slider({
       range: "max",
       min: 1989,
@@ -52,9 +52,17 @@ function startTimeline(){
     $(this).parent().find('p').toggleClass('hidden-class')
     if($(this).parent().find('p:not(.hidden-class)').text() == "Country"){
       toggleFlowChoroplethMap(false,true);
+      $('.description').addClass('country-view')
     }else if ($(this).parent().find('p:not(.hidden-class)').text() == "Product") {
       toggleFlowChoroplethMap(true,false);
+      $('.description').removeClass('country-view')
     }
+  }
+  function selectProduct(){
+    console.log($(this))
+    $(this).parent().children().removeClass('selected')
+    $(this).addClass('selected')
+
   }
 
 }

@@ -30,7 +30,91 @@
   margin:auto;
   max-width: 1600px;
 }
+.horizontal-view{
+  padding:0px;
+}
+.horizontal-view > div{
+  float: left;
+  height: 490px;
+}
 
+.description{
+  padding:0px;
+  position: fixed;
+  bottom:0px;
+}
+.description > div {
+  cursor: pointer;
+  float: left;
+  width:11.11%;
+  text-align: center;
+  height: 30px;
+  position: relative;
+  transition: all 500ms ease-in-out;
+  color: #818182;
+}
+.description{
+  margin-bottom: 10px;
+}
+
+.description > div.selected,
+.description > div:hover{
+  border-radius: 10px;
+  color: black;
+}
+
+
+.description > div .color{
+  background: black;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  position: absolute;
+  left: 20%;
+  top: 5px;
+  opacity: 0.3;
+  transition: opacity 500ms ease-in-out;
+}
+.description > div.selected .color,
+.description > div:hover .color{
+  opacity: 1;
+}
+.description > div .color.textiles{
+  background: #2a9300;
+
+}
+.description > div .color.wood{
+  background: #663300;
+}
+.description > div .color.minerals{
+  background: #66ccff;
+  left: 17%;
+}
+.description > div .color.food{
+  background: #003399;
+}
+.description > div .color.chemicals{
+  background: #ffff00;
+    left: 13%;
+}
+.description > div .color.plastic{
+  background: #7030a0;
+}
+.description > div .color.animal{
+  background: #c00000;
+}
+.description > div .color.fuel{
+  background: #ff9900
+}
+.description > div .color.mach{
+  background: #ff99ff;
+}
+.description.country-view > div{
+  color:black;
+}
+.description.country-view > div .color{
+  opacity: 1;
+}
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }
   100% { -webkit-transform: rotate(360deg); }
