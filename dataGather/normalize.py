@@ -1,7 +1,7 @@
 import pandas as pd
 
 df = pd.read_csv('all-exports.csv')
-to_stay = set(['All Products','Animal','Textiles and Clothing','Wood','Minerals','Food Products','Chemicals','Plastic or Rubber','Fuel','Mach and Elec'])
+to_stay = set(['All Products','Animal','Textiles and Clothing','Wood','Minerals','Food Products','Chemicals','Plastic or Rubber','Fuels','Mach and Elec'])
 def recode_empty_cells(dataframe, list_of_columns):
     for column in list_of_columns:
         dataframe[column].fillna(0, inplace=True)
