@@ -1,6 +1,7 @@
 // Trade dataset
 var dataset;
 var countries_map;
+var min_year = 1989, max_year = 2015;
 var year = 2004;
 var countries;
 var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"];
@@ -74,6 +75,7 @@ function startTimeline(){
         else
           $('.timeline .slider .slide span .year').text(ui.value);
         year = ui.value
+        fillCloropleth(getSelectedProduct())
       }
     });
     $('.timeline .slider .slide').append("<div class='left-slide'><div class='min-max-year'>1989</div></div><div class='right-slide'><div class='min-max-year'>2015</div></div>")
@@ -99,7 +101,9 @@ function startTimeline(){
   }
 
 }
-
+function getSelectedProduct(){
+	return $('.description > div.selected').attr('product')
+}
 
 function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
   if(choropleth_map){
@@ -214,11 +218,14 @@ function getSumProducts(listProducts){
       results = dataset.filter(function(element){
         return element["Product Group"] == product && element["Reporter Name"] == country; })
 
-      soma = 0
-      results.forEach(function(element){
-        soma += parseFloat(element[year]);
-      })
-      count[country] = soma
+      count[country] = {}
+      for(i = min_year; i <= max_year; i++){
+        soma = 0
+        results.forEach(function(element){
+          soma += parseFloat(element[i]);
+        })
+        count[country][i] = soma
+      }
     })
     all[product] = count
   })
@@ -228,7 +235,7 @@ function getSumProducts(listProducts){
 function computeQuintiles(product){
   x = []
   countries.forEach(function(count){
-     x.push(globalProducts[product][count])})
+     x.push(globalProducts[product][count][year])})
 
   x = x.sort(function(a,b){ return a-b})
   step = Math.floor(x.filter(function(el){ return el != 0 }).length*0.25)
@@ -244,7 +251,7 @@ function fillCloropleth(product){
 
   x = []
   countries.forEach(function(count){
-     x.push(globalProducts[product][count])})
+     x.push(globalProducts[product][count][year])})
   x = x.sort(function(a,b){ return a-b})
   no_zeros = x.filter(function(el){ return el != 0 })
 
@@ -258,7 +265,7 @@ function fillCloropleth(product){
   cor = productsColors[products.indexOf(product)]
 
   countries.forEach(function(count){
-    value = globalProducts[product][count]
+    value = globalProducts[product][count][year]
     if (value == 0){
       dic[countriesCodes[count]] = "rgba(129,129,130,1)"
     }else if(value < secondV){
@@ -278,11 +285,12 @@ function fillCloropleth(product){
     }
   })
 
-  opacity = 0.4
+  opacity = 0.2
   $('#bar-cloropleth > div').each(function(){
     $(this).css('background',"rgba(" +cor[0]+ "," +cor[1]+ "," +cor[2]+ ","+opacity+")")
     opacity += 0.2
   })
+  $('#bar-cloropleth > div:first-child').css('background','#818182');
 
   countries_map.updateChoropleth(dic)
 }
