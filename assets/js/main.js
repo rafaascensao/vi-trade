@@ -5,6 +5,7 @@ var min_year = 1989, max_year = 2015;
 var year = 2004;
 var countries;
 var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"];
+//var productfile = {"Textiles and Clothing", "Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"}
 var globalProducts;
 var countriesCodes = {};
 var productsColors = [[42,147,0],[102,51,0],[102,204,255],[0,51,153],[255,255,0],[112,48,160],[192,0,0],[255,153,0],[255,153,255]]
@@ -82,7 +83,6 @@ function startTimeline(){
   $('.timeline .slider .slide span').append("<div class='year'></div>")
   $( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );
   $('.timeline .slider .slide span .year').text(year+'')
-
 
   function toggleButtons(){
     $(this).parent().find('p').toggleClass('hidden-class')
@@ -266,6 +266,11 @@ function fillCloropleth(product){
   console.log(thirdV)
   console.log(fourthV)
   console.log(fifthV)
+  $('#bar-cloropleth > div:first-child').html("<p>Undefined</p>")
+  $('#bar-cloropleth > div:nth-child(2)').html("<p>"+Math.floor(firstV/1000)+" - "+Math.floor(secondV/1000)+"</p>")
+  $('#bar-cloropleth > div:nth-child(3)').html("<p>"+Math.floor(secondV/1000)+" - "+Math.floor(thirdV/1000)+"</p>")
+  $('#bar-cloropleth > div:nth-child(4)').html("<p>"+Math.floor(thirdV/1000)+" - "+Math.floor(fourthV/1000)+"</p>")
+  $('#bar-cloropleth > div:nth-child(5)').html("<p>"+Math.floor(fourthV/1000)+" - "+Math.floor(fifthV/1000)+"</p>")
 
   cor = productsColors[products.indexOf(product)]
 
@@ -297,7 +302,17 @@ function fillCloropleth(product){
   })
   $('#bar-cloropleth > div:first-child').css('background','#818182');
 
+  resetAllColors();
   countries_map.updateChoropleth(dic)
+
+
+}
+function resetAllColors(){
+  d = { }
+  Datamap.prototype.worldTopo.objects.world.geometries.forEach(function(element){
+    d[element["id"]] = "rgba(129,129,130,1)";
+  })
+  countries_map.updateChoropleth(d)
 }
 
 
@@ -315,7 +330,60 @@ function fillCloropleth(product){
 
 
 
+
+
 /* BARCHART */
+
+/*Simple Bar Chart*/
+function barchart() {
+  var svg = d3.select("svg"),
+      margin = {top: 20, right: 20, bottom: 30, left: 80},
+      width = +svg.attr("width") - margin.left - margin.right,
+      height = +svg.attr("height") - margin.top - margin.bottom;
+
+  var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+  var x = d3.scaleLinear().range([0, width]);
+  var y = d3.scaleBand().range([height, 0]);
+
+  var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var data = globalProducts[getSelectedProduct()][year]
+    data.sort(function(a, b) { return a.value - b.value; });
+
+    x.domain([0, d3.max(data, function(d) { return d.value; })]);
+    y.domain(data.map(function(d) { return d.area; })).padding(0.1);
+
+    g.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x).ticks(5).tickFormat(function(d) { return parseInt(d / 1000); }).tickSizeInner([-height]));
+
+    g.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(y));
+
+    g.selectAll(".bar")
+        .data(data)
+      .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", 0)
+        .attr("height", y.bandwidth())
+        .attr("y", function(d) { return y(d.area); })
+        .attr("width", function(d) { return x(d.value); })
+        .on("mousemove", function(d){
+            tooltip
+              .style("left", d3.event.pageX - 50 + "px")
+              .style("top", d3.event.pageY - 70 + "px")
+              .style("display", "inline-block")
+              .html((d.area) + "<br>" + "£" + (d.value));
+        })
+        .on("mouseout", function(d){ tooltip.style("display", "none");});
+};
+
+
+/*
 function startBarchart(){
   var categories= ['','Accessories', 'Audiophile', 'Camera & Photo', 'Cell Phones', 'Computers','eBook Readers','Gadgets','GPS & Navigation','Home Audio','Office Electronics','Portable Audio','Portable Video','Security & Surveillance','Service','Television & Video','Car & Vehicle'];
   var dollars = [213,209,190,179,156,209,190,179,213,209,190,179,156,209,190,190];
@@ -412,3 +480,4 @@ function startBarchart(){
 
 
 }
+*/
