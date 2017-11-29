@@ -112,6 +112,9 @@ function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
         scope:'world',
         element: document.getElementById('map'),
         responsive: true,
+        fills: {
+          defaultFill: 'rgb(129, 129, 130)' // Any hex, color name or rgb/rgba value
+        },
 
         //projection: 'mercator',
         done: function(datamap) {
@@ -142,7 +145,6 @@ function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
       newArcs = createOriginDestinationList(origin, destinations)
       refreshArcs(countries_map, newArcs)
    	}
-
   }
 
 
@@ -259,6 +261,11 @@ function fillCloropleth(product){
   fourthV = no_zeros[(step-1)*3]
   fifthV = no_zeros[no_zeros.length - 1]
 
+  console.log(firstV)
+  console.log(secondV)
+  console.log(thirdV)
+  console.log(fourthV)
+  console.log(fifthV)
 
   cor = productsColors[products.indexOf(product)]
 
