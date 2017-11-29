@@ -31,7 +31,7 @@ function open(){
     dataset = data;
     generateCountriesList();
     generateCodesDic();
-    globalProducts = getSumProducts(products);
+    getSumProducts(products);
     $('.loader').addClass('hidden')
     $('.row').removeClass('hidden')
   })
@@ -40,22 +40,22 @@ function generateCodesDic(){
   var codes;
   d3.csv("../../dataGather/countryCodes.csv", function(data){
     codes = data;
-      countries.forEach(function(country){
-        code = codes.filter(function(el){ return el["Name"] == country})
-        countriesCodes[country] = code[0]["Code"];
-      })
+    countries.forEach(function(country){
+      code = codes.filter(function(el){ return el["Name"] == country})
+      countriesCodes[country] = code[0]["Code"];
+    })
   })
 }
 function generateCountriesList(){
   x = []
   dataset.filter(function(element){
     if( x.indexOf(element["Reporter Name"]) < 0){
-		x.push(element["Reporter Name"])
+	  x.push(element["Reporter Name"])
     }
   })
   dataset.filter(function(element){
     if( x.indexOf(element["Partner Name"]) < 0){
-		x.push(element["Partner Name"])
+	  x.push(element["Partner Name"])
     }
   })
   countries = x
@@ -64,24 +64,24 @@ function startTimeline(){
   $('.timeline .options p').click(toggleButtons);
   $('.description > div').click(selectProduct);
   $( ".timeline .slider .slide" ).slider({
-      range: "max",
-      min: 1989,
-      max: 2015,
-      value: year,
-      slide: function( event, ui ) {
-        $( "#amount" ).val( ui.value );
-        if(ui.value == 1989 || ui.value == 2015)
-          $('.timeline .slider .slide span .year').text('')
-        else
-          $('.timeline .slider .slide span .year').text(ui.value);
-        year = ui.value
-        fillCloropleth(getSelectedProduct())
-      }
-    });
-    $('.timeline .slider .slide').append("<div class='left-slide'><div class='min-max-year'>1989</div></div><div class='right-slide'><div class='min-max-year'>2015</div></div>")
-    $('.timeline .slider .slide span').append("<div class='year'></div>")
-    $( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );
-    $('.timeline .slider .slide span .year').text(year+'')
+    range: "max",
+    min: 1989,
+    max: 2015,
+    value: year,
+    slide: function( event, ui ) {
+      $( "#amount" ).val( ui.value );
+      if(ui.value == 1989 || ui.value == 2015)
+        $('.timeline .slider .slide span .year').text('')
+      else
+        $('.timeline .slider .slide span .year').text(ui.value);
+      year = ui.value
+      fillCloropleth(getSelectedProduct())
+    }
+  });
+  $('.timeline .slider .slide').append("<div class='left-slide'><div class='min-max-year'>1989</div></div><div class='right-slide'><div class='min-max-year'>2015</div></div>")
+  $('.timeline .slider .slide span').append("<div class='year'></div>")
+  $( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );
+  $('.timeline .slider .slide span .year').text(year+'')
 
 
   function toggleButtons(){
@@ -102,19 +102,19 @@ function startTimeline(){
 
 }
 function getSelectedProduct(){
-	return $('.description > div.selected').attr('product')
+  return $('.description > div.selected').attr('product')
 }
 
 function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
   if(choropleth_map){
     if(countries_map == undefined){
       countries_map = new Datamap({
-         scope:'world',
-         element: document.getElementById('map'),
-         responsive: true,
+        scope:'world',
+        element: document.getElementById('map'),
+        responsive: true,
 
-         //projection: 'mercator',
-         done: function(datamap) {
+        //projection: 'mercator',
+        done: function(datamap) {
 
         }
       });
@@ -124,24 +124,24 @@ function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
   }else{
     if(countries_map == undefined){
       countries_map = new Datamap({
-         scope:'world',
-         element: document.getElementById('map'),
-         responsive: true,
-         //projection: 'mercator',
-         done: function(datamap) {
-               interactFlowMap(datamap)
-           }
+        scope:'world',
+        element: document.getElementById('map'),
+        responsive: true,
+        //projection: 'mercator',
+        done: function(datamap) {
+          interactFlowMap(datamap)
+        }
       });
       origin = 'PRT'
       destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
       newArcs = createOriginDestinationList(origin, destinations)
       refreshArcs(countries_map, newArcs)
-   }else{
-     origin = 'PRT'
-     destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
-     newArcs = createOriginDestinationList(origin, destinations)
-     refreshArcs(countries_map, newArcs)
-   }
+   	}else{
+      origin = 'PRT'
+      destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
+      newArcs = createOriginDestinationList(origin, destinations)
+      refreshArcs(countries_map, newArcs)
+   	}
 
   }
 
@@ -154,47 +154,47 @@ function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
     function redraw() {
       console.log(d3.event.translate)
       if(d3.event.translate[0] > 0)
-       d3.event.translate[0] = -1
+       	d3.event.translate[0] = -1
       if(d3.event.translate[1] > 0)
-       d3.event.translate[1] = -1
+       	d3.event.translate[1] = -1
       /*console.log("COMPARING WITH "+ d3.event.translate[0] + " " + d3.event.scale)
       if(d3.event.translate[0] < d3.event.scale)
        d3.event.translate[0] = -1 * d3.event.scale
       if(d3.event.translate[1] < d3.event.scale)
        d3.event.translate[1] = -1 * d3.event.scale*/
-     zoom.translate(d3.event.translate)
+      zoom.translate(d3.event.translate)
       if(d3.event)
-      datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+      	datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
     datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
-        console.log(geography.properties.name);
-        console.log(geography)
+      console.log(geography.properties.name);
+      console.log(geography)
     });
-}
-/* ARCS */
-function createOriginDestinationList(origin, destinations){
-  res = [];
-  destinations.forEach(function(el){
-    res.push({ origin: origin, destination: el})
-  });
-  return res
-}
+  }
+  /* ARCS */
+  function createOriginDestinationList(origin, destinations){
+  	res = [];
+  	destinations.forEach(function(el){
+      res.push({ origin: origin, destination: el})
+  	});
+  	return res
+  }
 
-function removeArcs(map){
-  map.svg.selectAll('path.datamaps-arc').remove()
-}
+  function removeArcs(map){
+  	map.svg.selectAll('path.datamaps-arc').remove()
+  }
 
-function refreshArcs(map, newArcs){
-  removeArcs(map);
-  map.arc(newArcs, );
-}
+  function refreshArcs(map, newArcs){
+  	removeArcs(map);
+  	map.arc(newArcs, );
+  }
 
 
 
-/* ZOOM */
-function zoomToArea(area,scale){
-  zoom.scale(scale).translate(area).event(countries_map.svg.selectAll("g"))
-}
+  /* ZOOM */
+  function zoomToArea(area,scale){
+  	zoom.scale(scale).translate(area).event(countries_map.svg.selectAll("g"))
+  }
 
 
 
@@ -211,31 +211,29 @@ function startMap(){
 function getSumProducts(listProducts){
   // QUERY
   all = {}
+  var sums;
+  d3.csv("../../dataGather/derived.csv", function(data){
   listProducts.forEach(function(product){
-    console.log("Computing " + product)
-    count = {}
-    countries.forEach(function(country){
-      results = dataset.filter(function(element){
-        return element["Product Group"] == product && element["Reporter Name"] == country; })
-
-      count[country] = {}
-      for(i = min_year; i <= max_year; i++){
-        soma = 0
-        results.forEach(function(element){
-          soma += parseFloat(element[i]);
-        })
-        count[country][i] = soma
-      }
-    })
+  	 console.log("Computing " + product)
+  	 count = {}
+  	 countries.forEach(function(country){
+        results = data.filter(function(element){
+          return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export'; })
+		    count[country] = {}
+        for(i = min_year; i <= max_year; i++){
+          count[country][i] = results[0][i]
+        }
+      })
     all[product] = count
+  	})
+  	globalProducts = all
   })
-  return all
-}
+  }
 
 function computeQuintiles(product){
   x = []
   countries.forEach(function(count){
-     x.push(globalProducts[product][count][year])})
+    x.push(globalProducts[product][count][year])})
 
   x = x.sort(function(a,b){ return a-b})
   step = Math.floor(x.filter(function(el){ return el != 0 }).length*0.25)
@@ -251,7 +249,7 @@ function fillCloropleth(product){
 
   x = []
   countries.forEach(function(count){
-     x.push(globalProducts[product][count][year])})
+    x.push(globalProducts[product][count][year])})
   x = x.sort(function(a,b){ return a-b})
   no_zeros = x.filter(function(el){ return el != 0 })
 
@@ -326,40 +324,40 @@ function startBarchart(){
   });
 
   var xscale = d3.scale.linear()
-          .domain([10,250])
-          .range([0,722]);
+    .domain([10,250])
+    .range([0,722]);
 
   var yscale = d3.scale.linear()
-          .domain([0,categories.length])
-          .range([0,480]);
+    .domain([0,categories.length])
+    .range([0,480]);
 
   var colorScale = d3.scale.quantize()
-          .domain([0,categories.length])
-          .range(colors);
+    .domain([0,categories.length])
+    .range(colors);
 
   var canvas = d3.select('#bar_chart svg');
 
-var grids = canvas.append('g')
-          .attr('id','grid')
-          .attr('transform','translate(50,10)')
-          .selectAll('line')
-          .data(grid)
-          .enter()
-          .append('line')
-          .attr({'x1':function(d,i){ return i*30; },
-             'y1':function(d){ return d.y1; },
-             'x2':function(d,i){ return i*30; },
-             'y2':function(d){ return d.y2; },
-          })
-          .style({'stroke':'#adadad','stroke-width':'1px'});
+  var grids = canvas.append('g')
+    .attr('id','grid')
+    .attr('transform','translate(50,10)')
+    .selectAll('line')
+    .data(grid)
+    .enter()
+    .append('line')
+    .attr({'x1':function(d,i){ return i*30; },
+      'y1':function(d){ return d.y1; },
+      'x2':function(d,i){ return i*30; },
+      'y2':function(d){ return d.y2; },
+    })
+    .style({'stroke':'#adadad','stroke-width':'1px'});
 
-var	xAxis = d3.svg.axis();
+  var	xAxis = d3.svg.axis();
   xAxis
     .orient('bottom')
     .scale(xscale)
     .tickValues(tickVals);
 
-var	yAxis = d3.svg.axis();
+  var	yAxis = d3.svg.axis();
   yAxis
     .orient('left')
     .scale(yscale)
@@ -367,42 +365,42 @@ var	yAxis = d3.svg.axis();
     .tickFormat(function(d,i){ return categories[i]; })
     .tickValues(d3.range(17));
 
-var y_xis = canvas.append('g')
-          .attr("transform", "translate(50,0)")
-          .attr('id','yaxis')
-          .call(yAxis);
+  var y_xis = canvas.append('g')
+    .attr("transform", "translate(50,0)")
+    .attr('id','yaxis')
+    .call(yAxis);
 
-var x_xis = canvas.append('g')
-          .attr("transform", "translate(50,480)")
-          .attr('id','xaxis')
-          .call(xAxis);
+  var x_xis = canvas.append('g')
+    .attr("transform", "translate(50,480)")
+    .attr('id','xaxis')
+    .call(xAxis);
 
-var chart = canvas.append('g')
-          .attr("transform", "translate(50,0)")
-          .attr('id','bars')
-          .selectAll('rect')
-          .data(dollars)
-          .enter()
-          .append('rect')
-          .attr('height',19)
-          .attr({'x':0,'y':function(d,i){ return yscale(i)+19; }})
-          .style('fill',function(d,i){ return colorScale(i); })
-          .attr('width',function(d){ return 0; });
+  var chart = canvas.append('g')
+    .attr("transform", "translate(50,0)")
+    .attr('id','bars')
+    .selectAll('rect')
+    .data(dollars)
+    .enter()
+    .append('rect')
+    .attr('height',19)
+    .attr({'x':0,'y':function(d,i){ return yscale(i)+19; }})
+    .style('fill',function(d,i){ return colorScale(i); })
+    .attr('width',function(d){ return 0; });
 
 
-var transit = d3.select("svg").selectAll("rect")
-            .data(dollars)
-            .transition()
-            .duration(1000)
-            .attr("width", function(d) {return xscale(d); });
+  var transit = d3.select("svg").selectAll("rect")
+    .data(dollars)
+    .transition()
+    .duration(1000)
+    .attr("width", function(d) {return xscale(d); });
 
-var transitext = d3.select('#bars')
-          .selectAll('text')
-          .data(dollars)
-          .enter()
-          .append('text')
-          .attr({'x':function(d) {return xscale(d)-200; },'y':function(d,i){ return yscale(i)+35; }})
-          .text(function(d){ return d+"$"; }).style({'fill':'#fff','font-size':'14px'});
+  var transitext = d3.select('#bars')
+    .selectAll('text')
+    .data(dollars)
+    .enter()
+    .append('text')
+    .attr({'x':function(d) {return xscale(d)-200; },'y':function(d,i){ return yscale(i)+35; }})
+    .text(function(d){ return d+"$"; }).style({'fill':'#fff','font-size':'14px'});
 
 
 
