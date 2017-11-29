@@ -29,26 +29,23 @@ def sumRow(row):
         total = total + value
     return total
 
-for p in products:
-    print(p)
-    p = p.replace(' ', '')
-    p = p.lower()
-    filename = p + '_derived.csv'
-    with open(filename, 'w') as fimp:
-        wr = csv.writer(fimp)
-        columns = ['Reporter Name', 'Trade Flow']
-        columns.extend(years)
-        columns.append('Total')
-        wr.writerow(columns)
-        for country in countries:
-            print('Export: ' + country)
-            myList = [country, 'Export']
+filename = 'derived.csv'
+with open(filename, 'w') as fimp:
+    wr = csv.writer(fimp)
+    columns = ['Reporter Name', 'Trade Flow', 'Product Group']
+    columns.extend(years)
+    columns.append('Total')
+    wr.writerow(columns)
+    for country in countries:
+        for p in products:
+            print('Export: ' + country + 'Product:' + p)
+            myList = [country, 'Export', p]
             sums = calculateSumForReporter(country, dfExport, p)
             myList.extend(sums)
             myList.append(sumRow(sums))
             wr.writerow(myList) 
-            print('Import: ' + country)
-            myList = [country, 'Import']
+            print('Import: ' + country + 'Product: ' + p)
+            myList = [country, 'Import', p]
             sums = calculateSumForReporter(country, dfExport, p)
             myList.extend(sums)
             myList.append(sumRow(sums))
