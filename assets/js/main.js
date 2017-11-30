@@ -90,9 +90,27 @@ function startTimeline(){
     $(this).parent().find('p').toggleClass('hidden-class')
     if($(this).parent().find('p:not(.hidden-class)').text() == "Country"){
       toggleFlowChoroplethMap(false,true);
+
+      // ISTO SO FICA ASSIM PARA ESTA ENTREGA, DEPOIS
+      // ESTE CANCRO DESAPARECE DAQUI
+      $('.country_view').removeClass('hide');
+      $('.cleveland_dot_plot').removeClass('hide');
+      $('.bar-chart_container').addClass('hide')
+      $('#bar_chart svg > *').remove();
+
       $('.description').addClass('country-view')
     }else if ($(this).parent().find('p:not(.hidden-class)').text() == "Product") {
       toggleFlowChoroplethMap(true,false);
+      refreshBarChart();
+
+
+      // ISTO SO FICA ASSIM PARA ESTA ENTREGA, DEPOIS
+      // ESTE CANCRO DESAPARECE DAQUI
+      $('.country_view').addClass('hide');
+      $('.cleveland_dot_plot').addClass('hide');
+      $('.bar-chart_container').removeClass('hide')
+
+
       $('.description').removeClass('country-view')
     }
   }
@@ -239,7 +257,7 @@ function computeQuintiles(product){
   x = []
   countries.forEach(function(count){
     if (count != " World" && count != "European Union"){
-    x.push(globalProducts[product][count][year])}
+    x.push(parseFloat(globalProducts[product][count][year]))}
   })
 
   x = x.sort(function(a,b){ return a-b})
@@ -257,7 +275,7 @@ function fillCloropleth(product){
   x = []
   countries.forEach(function(count){
     if (count != " World" && count != "European Union"){
-    x.push(globalProducts[product][count][year])}
+    x.push(parseFloat(globalProducts[product][count][year]))}
   })
   x = x.sort(function(a,b){ return a-b})
   no_zeros = x.filter(function(el){ return el != 0 })
@@ -283,23 +301,23 @@ function fillCloropleth(product){
 
   countries.forEach(function(count){
     if (count != " World" && count != "European Union"){
-    value = globalProducts[product][count][year]
+    value = parseFloat(globalProducts[product][count][year])
     if (value == 0){
       dic[countriesCodes[count]] = "rgba(129,129,130,1)"
     }
-    else if(value < secondV){
+    else if(value <= secondV){
       dic[countriesCodes[count]] = "rgba(" +cor[0]+ "," +cor[1]+ "," +cor[2]+ ",0.4)"
     }
 
-    else if(value < thirdV){
+    else if(value >= secondV && value < thirdV){
       dic[countriesCodes[count]] = "rgba(" +cor[0]+ "," +cor[1]+ "," +cor[2]+ ",0.6)"
     }
 
-    else if(value < fourthV){
+    else if(value >= thirdV && value < fourthV){
       dic[countriesCodes[count]] = "rgba(" +cor[0]+ "," +cor[1]+ "," +cor[2]+ ",0.8)"
     }
 
-    else if(value > fourthV){
+    else if(value >= fourthV){
       dic[countriesCodes[count]] = "rgba(" +cor[0]+ "," +cor[1]+ "," +cor[2]+ ",1)"
     }
   }
