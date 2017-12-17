@@ -10,20 +10,53 @@ var globalProducts;
 var countriesCodes = {};
 var productsColors = [[42,147,0],[102,51,0],[102,204,255],[0,51,153],[255,255,0],[112,48,160],[192,0,0],[255,153,0],[255,153,255]]
 //Include html
-w3.includeHTML(startViews);
+w3.includeHTML(computeValues);
 
 // MAIN INSIDE THIS FUNCTION ONLY
-function startViews(){
+function computeValues(){
   //Removes loading
   open();
-  startTimeline()
-
-  startMap()
-
-
+  checkReady()
 
 }
 
+  var data =
+[
+    { category: "Textiles and Clothing", count: 57},
+    { category: "Wood", count: 15},
+    { category: "Minerals", count: 10},
+    { category: "Food Products", count: 8},
+    { category: "Chemicals", count: 5},
+    { category: "Plastic or Rubber", count: 3},
+    { category: "Animal", count: 1},
+    { category: "Fuels", count: 1},
+    { category: "Mach and Elec", count: 1}
+];
+var chart_options = {
+     dot_radius : 12,
+     no_of_circles_in_a_row: 40,
+         dot_padding_left : 5,
+         dot_padding_right : 5,
+         dot_padding_top : 5,
+         dot_padding_bottom : 5
+ }
+function startViews(){
+  startTimeline()
+  startMap()
+  startBarchart()
+  $('.description > div.selected').click()
+  $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
+  DotMatrixChart(data, chart_options)
+
+}
+
+function checkReady(){
+  if(globalProducts != null){
+    startViews()
+  }else{
+    setTimeout(checkReady, 250)
+  }
+}
 
 
 /* Open file and shit */
@@ -139,7 +172,7 @@ function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
 
         //projection: 'mercator',
         done: function(datamap) {
-
+          interactFlowMap(datamap)
         }
       });
     }else{
@@ -286,11 +319,6 @@ function fillCloropleth(product){
   fourthV = no_zeros[(step-1)*3]
   fifthV = no_zeros[no_zeros.length - 1]
 
-  console.log(firstV)
-  console.log(secondV)
-  console.log(thirdV)
-  console.log(fourthV)
-  console.log(fifthV)
   $('#bar-cloropleth > div:first-child').html("<p>Undefined</p>")
   $('#bar-cloropleth > div:nth-child(2)').html("<p>"+Math.floor(firstV/1000)+" - "+Math.floor(secondV/1000)+"</p>")
   $('#bar-cloropleth > div:nth-child(3)').html("<p>"+Math.floor(secondV/1000)+" - "+Math.floor(thirdV/1000)+"</p>")
@@ -434,11 +462,157 @@ function barchart() {
 
 
 function refreshBarChart(){
-  $('#bar_chart svg > *').remove();
+  //$('.bar-chart_container svg').remove();
   startBarchart()
 }
 
 function startBarchart(){
+  var l = getCountryExport(15)
+  categories = ['']
+  dollars = []
+
+  opacity = 1.0
+  l.forEach(function(element){
+    color = productsColors[products.indexOf(getSelectedProduct())]
+    element.push(color)
+    element.push(opacity-=0.02)
+    element[1] = Math.floor(parseFloat(element[1])/1000000)
+  });
+  var colors = ['#0000b4','#0082ca','#0094ff','#0d4bcf','#0066AE','#074285','#00187B','#285964','#405F83','#416545','#4D7069','#6E9985','#7EBC89','#0283AF','#79BCBF','#99C19E'];
+
+  var w = $('.bar-chart_container').width() - 10
+  var h = $('.bar-chart_container').height()
+  var padding_left = 70
+  var padding_bottom = 15
+  var xscale = d3.scale.linear()
+                 .domain([0,l.length])
+                 .range([0,h-padding_bottom])
+  var hscale = d3.scale.linear()
+                 .domain([0,l[0][1]])
+                 .range([0,w-padding_left])
+
+  var yaxis = d3.svg.axis()
+                .orient('Bottom')
+                .scale(hscale)
+                .tickSize(1)
+                .ticks(3)
+              //  .tickValues(d3.range(4))
+
+  var xaxis = d3.svg.axis()
+                .orient('left')
+                .scale(xscale)
+                .tickSize(0)
+                .tickFormat(function(d,i){ return l[i][0]; })
+                .tickValues(d3.range(15));
+
+  var svg, tooltip;
+  var grid = [];
+
+  if($(".bar-chart_container svg").length > 0){
+    svg = d3.select(".bar-chart_container svg")
+    tooltip = d3.select("body .toolTip")
+
+    svg.select("#country_axis").call(xaxis)
+    svg.select("#dollars_axis").call(yaxis)
+    svg.selectAll("rect")
+      .data(l)
+       .attr("height",Math.floor(w/l.length)-1)
+       .attr("fill",function(d,i){ return 'rgba('+d[2][0]+','+d[2][1]+','+d[2][2]+','+d[3]+')'; })
+       .attr("y", function(d, i){ return xscale(i)})
+       .attr("x", function(d){ return padding_left })
+       .on("mousemove", function(d){
+             val = d[1]
+               tooltip
+                 .style("left", d3.event.pageX - 50 + "px")
+                 .style("top", d3.event.pageY - 70 + "px")
+                 .style("display", "inline-block")
+                 .html(val+" US($) Millions");
+           })
+       		.on("mouseout", function(d){ tooltip.style("display", "none");});
+
+    svg.select("#dollars_axis").selectAll(".tick").each(function(element){
+      var tick = d3.select(this)
+      var translate = d3.transform(tick.attr("transform")).translate;
+      grid.push(translate[0])
+    })
+    svg.select("#names_axis")
+       .selectAll("rect")
+       .remove()
+    svg.select("#names_axis")
+       .selectAll("rect")
+        .data(grid)
+          .enter().append("rect")
+          .attr("height",h-(padding_bottom*1.5))
+          .attr("width", "1")
+          .attr("x" , function(d){ return d; })
+          .style({'stroke':'#adadad','stroke-width':'1px'})
+  }else{
+    svg = d3.select(".bar-chart_container").append("svg")
+                                           .attr("width",w)
+                                           .attr("height",h);
+    svg.append("g")
+      .attr("transform","translate("+padding_left+","+(h-(padding_bottom*1.5))+")")
+      .attr("id","dollars_axis")
+      .call(yaxis)
+
+    tooltip = d3.select("body").append("div").attr("class", "toolTip");
+
+    svg.append("g")
+      .attr("id","country_axis")
+      .attr("transform", "translate("+padding_left+",11)")
+      .call(xaxis)
+        .selectAll("text")
+        .attr("font-size","12px")
+
+    svg.selectAll("rect")
+      .data(l)
+       .enter().append("rect")
+       .attr("height",Math.floor(w/l.length)-1)
+       .attr("width", 0)
+       .attr("fill",function(d,i){ return 'rgba('+d[2][0]+','+d[2][1]+','+d[2][2]+','+d[3]+')'; })
+       .attr("y", function(d, i){ return xscale(i)})
+       .attr("x", function(d){ return padding_left })
+       .on("mousemove", function(d){
+             val = d[1]
+               tooltip
+                 .style("left", d3.event.pageX - 50 + "px")
+                 .style("top", d3.event.pageY - 70 + "px")
+                 .style("display", "inline-block")
+                 .html(val+" US($) Millions");
+           })
+       		.on("mouseout", function(d){ tooltip.style("display", "none");});
+
+    svg.select("#dollars_axis").selectAll(".tick").each(function(element){
+      var tick = d3.select(this)
+      var translate = d3.transform(tick.attr("transform")).translate;
+      grid.push(translate[0])
+    })
+    svg.append("g")
+       .attr("transform","translate("+padding_left+",0)")
+       .attr("id","names_axis")
+       .selectAll("rect")
+        .data(grid)
+          .enter().append("rect")
+          .attr("height",h-(padding_bottom*1.5))
+          .attr("width", "1")
+          .attr("x" , function(d){ return d; })
+          .style({'stroke':'#adadad','stroke-width':'1px'})
+  }
+
+
+
+
+  var transit_bars = svg.selectAll("rect")
+    .data(l)
+    .transition()
+    .duration(500)
+    .attr("width",function(d){ return hscale(d[1])});
+
+
+
+}
+
+function qwestartBarchart(){
  var l = getCountryExport(15)
  categories = ['']
  dollars = []
@@ -452,14 +626,14 @@ function startBarchart(){
   var colors = ['#0000b4','#0082ca','#0094ff','#0d4bcf','#0066AE','#074285','#00187B','#285964','#405F83','#416545','#4D7069','#6E9985','#7EBC89','#0283AF','#79BCBF','#99C19E'];
 
   /* Y2 ALTURA DO GRAFICO */
-  var grid = d3.range(8).map(function(i){
+  var grid = d3.range(9).map(function(i){
     return {'x1':0,'y1':0,'x2':0,'y2':$('.bar-chart_container').height() - 10 };
   });
 
   var tickVals = grid.map(function(d,i){
     /*if(i>0){ return i*22; }
     else if(i===0){ return "100";}*/
-    return 0
+    return i
   });
 
 
@@ -500,10 +674,14 @@ function startBarchart(){
     })
     .style({'stroke':'#adadad','stroke-width':'1px'});
 
+  lscale = d3.scale.linear()
+    .domain([1,dollars[0]])
+    .range([0,$('.bar-chart_container').width()]);
+
   var	xAxis = d3.svg.axis();
   xAxis
     .orient('bottom')
-    .scale(xscale)
+    .scale(lscale)
     .tickSize(2)
     .tickValues(tickVals);
 
@@ -569,4 +747,54 @@ function startBarchart(){
 
   d3.select('#bar_chart svg #yaxis').selectAll('text').attr('font-size','12px')
 
+}
+
+
+
+function DotMatrixChart(data,options){
+  var h = $('.dot_matrix_chart').height()
+  var w = $('.dot_matrix_chart').width()
+  var radius = options["dot_radius"]
+
+  var padding_left = 40
+  var padding_top = 60
+
+  var xScale = d3.scale.linear().range([0,w])
+  var yScale = d3.scale.linear().range([0,h])
+
+  var svg = d3.select(".dot_matrix_chart")
+              .append("svg")
+              .attr("width", w)
+              .attr("height", h)
+  svg.append("g")
+      .attr("class","circles")
+      .attr("transform","translate("+padding_left+","+padding_top+")")
+
+  function generateCircleElement(data){
+    var l = []
+    data.forEach(function(el){
+      for(step = 0; step < el["count"] ; step++)
+        l.push({ category: el["category"]})
+    })
+    return l
+  }
+
+  var num_columns = Math.ceil((w - padding_left) / (radius * 3))-1
+
+  var circles = svg.select(".circles")
+                  .selectAll("circle")
+                  .data(generateCircleElement(data))
+                    .enter()
+                    .append("circle")
+                    .attr("fill", function(d){ return "rgb("+productsColors[products.indexOf(d["category"])][0]+","+productsColors[products.indexOf(d["category"])][1]+","+productsColors[products.indexOf(d["category"])][2]+")" })
+                    .attr("r",radius)
+                    .attr("cx", function(d,i){
+                       x = i / num_columns
+                       y = parseInt(x)
+                       final  =  x - y
+                       return (final * num_columns) * (radius * 3) })
+                    .attr("cy", function(d,i){
+                       x = Math.floor(i / num_columns) - 1
+                       return x * (radius * 3)
+                    })
 }

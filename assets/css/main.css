@@ -120,13 +120,17 @@
   opacity: 1;
 }
 
-
-.dot_matrix_chart,
-.line_chart,
 .cleveland_dot_plot{
+  border:solid 1px;
+  border-radius: 10px;
+  padding:0px;
+}
+.dot_matrix_chart,
+.line_chart{
   height: 300px !important;
   border:solid 1px;
   border-radius: 10px;
+  padding:0px;
 }
 .hide{
   display: none;
