@@ -1,186 +1,146 @@
 /* BARCHART */
-/*Simple Bar Chart*/
-function barchart() {
-  var svg = d3.select("#bar_chart svg"),
-      margin = {top: 20, right: 20, bottom: 30, left: 80},
-      width = +svg.attr("width") - margin.left - margin.right,
-      height = +svg.attr("height") - margin.top - margin.bottom;
-
-  var tooltip = d3.select("body").append("div").attr("class", "toolTip");
-
-  var x = d3.scale.linear().range([0, width]);
-  var y = d3.ordinal().range([height, 0]);
-
-  var g = svg.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var data = globalProducts[getSelectedProduct()][year]
-    data.sort(function(a, b) { return a.value - b.value; });
-
-    x.domain([0, d3.max(data, function(d) { return d.value; })]);
-    y.domain(data.map(function(d) { return d.area; })).padding(0.1);
-
-    g.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x).ticks(5).tickFormat(function(d) { return parseInt(d / 1000); }).tickSizeInner([-height]));
-
-    g.append("g")
-        .attr("class", "y axis")
-        .call(d3.axisLeft(y));
-
-    g.selectAll(".bar")
-        .data(data)
-      .enter().append("rect")
-        .attr("class", "bar")
-        .attr("x", 0)
-        .attr("height", y.bandwidth())
-        .attr("y", function(d) { return y(d.area); })
-        .attr("width", function(d) { return x(d.value); })
-        .on("mousemove", function(d){
-            tooltip
-              .style("left", d3.event.pageX - 50 + "px")
-              .style("top", d3.event.pageY - 70 + "px")
-              .style("display", "inline-block")
-              .html((d.area) + "<br>" + "£" + (d.value));
-        })
-        .on("mouseout", function(d){ tooltip.style("display", "none");});
-};
-
-function refreshBarChart(){
-  $('#bar_chart svg > *').remove();
-  startBarchart()
-}
-
 function startBarchart(){
- var l = getCountryExport(15)
- categories = ['']
- dollars = []
-  l.forEach(function(element){
-  	categories.push(element[0])
-  	dollars.push(Math.floor(parseFloat(element[1])/1000000))
-  });
+  var l = getCountryExport(15)
+  categories = ['']
+  dollars = []
 
-  //  var categories= ['','Accessories', 'Audiophile', 'Camera', 'Cell Phones', 'Computers','eBook Readers','Gadgets','GPS ','Home Audio','Office','Portable Audio','Portable Video','Security ','Service','Television ','Car & Vehicle'];
-  //  var dollars = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16];
+  opacity = 1.0
+  l.forEach(function(element){
+    color = productsColors[products.indexOf(getSelectedProduct())]
+    element.push(color)
+    element.push(opacity-=0.02)
+    element[1] = Math.floor(parseFloat(element[1])/1000000)
+  });
   var colors = ['#0000b4','#0082ca','#0094ff','#0d4bcf','#0066AE','#074285','#00187B','#285964','#405F83','#416545','#4D7069','#6E9985','#7EBC89','#0283AF','#79BCBF','#99C19E'];
 
-  /* Y2 ALTURA DO GRAFICO */
-  var grid = d3.range(8).map(function(i){
-    return {'x1':0,'y1':0,'x2':0,'y2':$('.bar-chart_container').height() - 10 };
-  });
-
-  var tickVals = grid.map(function(d,i){
-    /*if(i>0){ return i*22; }
-    else if(i===0){ return "100";}*/
-    return 0
-  });
-
-
-  /* DOMAIN [MININO , MAXIMO EXPORTADO]
-     RANGE [0, LARGURA DA DIV]
-  */
+  var w = $('.bar-chart_container').width() - 10
+  var h = $('.bar-chart_container').height()
+  var padding_left = 70
+  var padding_bottom = 15
   var xscale = d3.scale.linear()
-    .domain([1,dollars[0]])
-    .range([0,$('.bar-chart_container').width() - 110]);
+                 .domain([0,l.length])
+                 .range([0,h-padding_bottom])
+  var hscale = d3.scale.linear()
+                 .domain([0,l[0][1]])
+                 .range([0,w-padding_left])
 
+  var yaxis = d3.svg.axis()
+                .orient('Bottom')
+                .scale(hscale)
+                .tickSize(1)
+                .ticks(3)
+              //  .tickValues(d3.range(4))
 
-  /* DOMAIN [0, NUMERO PAISES]
-     RANGE [0, ALTURA DA DIV]
-  */
-  var yscale = d3.scale.linear()
-    .domain([0,categories.length])
-    .range([0,$('.bar-chart_container').height() - 30]);
+  var xaxis = d3.svg.axis()
+                .orient('left')
+                .scale(xscale)
+                .tickSize(0)
+                .tickFormat(function(d,i){ return l[i][0]; })
+                .tickValues(d3.range(15));
 
+  var svg, tooltip;
+  var grid = [];
 
-  var colorScale = d3.scale.quantize()
-    .domain([0,categories.length])
-    .range(colors);
+  if($(".bar-chart_container svg").length > 0){
+    svg = d3.select(".bar-chart_container svg")
+    tooltip = d3.select("body .toolTip")
 
-  var canvas = d3.select('#bar_chart svg');
-  var tooltip = d3.select("#bar_chart").append("div").attr("class", "toolTip");
+    svg.select("#country_axis").call(xaxis)
+    svg.select("#dollars_axis").call(yaxis)
+    svg.selectAll("rect")
+      .data(l)
+       .attr("height",Math.floor(w/l.length)-1)
+       .attr("fill",function(d,i){ return 'rgba('+d[2][0]+','+d[2][1]+','+d[2][2]+','+d[3]+')'; })
+       .attr("y", function(d, i){ return xscale(i)})
+       .attr("x", function(d){ return padding_left })
+       .on("mousemove", function(d){
+             val = d[1]
+               tooltip
+                 .style("left", d3.event.pageX - 50 + "px")
+                 .style("top", d3.event.pageY - 70 + "px")
+                 .style("display", "inline-block")
+                 .html(val+" US($) Millions");
+           })
+       		.on("mouseout", function(d){ tooltip.style("display", "none");});
 
-  var grids = canvas.append('g')
-    .attr('id','grid')
-    .attr('transform','translate(100,10)')
-    .selectAll('line')
-    .data(grid)
-    .enter()
-    .append('line')
-    .attr({'x1':function(d,i){ return i*30; },
-      'y1':function(d){ return d.y1; },
-      'x2':function(d,i){ return i*30; },
-      'y2':function(d){ return d.y2 - 35; },
+    svg.select("#dollars_axis").selectAll(".tick").each(function(element){
+      var tick = d3.select(this)
+      var translate = d3.transform(tick.attr("transform")).translate;
+      grid.push(translate[0])
     })
-    .style({'stroke':'#adadad','stroke-width':'1px'});
+    svg.select("#names_axis")
+       .selectAll("rect")
+       .remove()
+    svg.select("#names_axis")
+       .selectAll("rect")
+        .data(grid)
+          .enter().append("rect")
+          .attr("height",h-(padding_bottom*1.5))
+          .attr("width", "1")
+          .attr("x" , function(d){ return d; })
+          .style({'stroke':'#adadad','stroke-width':'1px'})
+  }else{
+    svg = d3.select(".bar-chart_container").append("svg")
+                                           .attr("width",w)
+                                           .attr("height",h);
+    svg.append("g")
+      .attr("transform","translate("+padding_left+","+(h-(padding_bottom*1.5))+")")
+      .attr("id","dollars_axis")
+      .call(yaxis)
 
-  var	xAxis = d3.svg.axis();
-  xAxis
-    .orient('bottom')
-    .scale(xscale)
-    .tickSize(2)
-    .tickValues(tickVals);
+    tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
-  var	yAxis = d3.svg.axis();
-  yAxis
-    .orient('left')
-    .scale(yscale)
-    .tickSize(2)
-    .tickFormat(function(d,i){ return categories[i]; })
-    .tickValues(d3.range(17));
+    svg.append("g")
+      .attr("id","country_axis")
+      .attr("transform", "translate("+padding_left+",11)")
+      .call(xaxis)
+        .selectAll("text")
+        .attr("font-size","12px")
 
+    svg.selectAll("rect")
+      .data(l)
+       .enter().append("rect")
+       .attr("height",Math.floor(w/l.length)-1)
+       .attr("width", 0)
+       .attr("fill",function(d,i){ return 'rgba('+d[2][0]+','+d[2][1]+','+d[2][2]+','+d[3]+')'; })
+       .attr("y", function(d, i){ return xscale(i)})
+       .attr("x", function(d){ return padding_left })
+       .on("mousemove", function(d){
+             val = d[1]
+               tooltip
+                 .style("left", d3.event.pageX - 50 + "px")
+                 .style("top", d3.event.pageY - 70 + "px")
+                 .style("display", "inline-block")
+                 .html(val+" US($) Millions");
+           })
+       		.on("mouseout", function(d){ tooltip.style("display", "none");});
 
-  var y_xis = canvas.append('g')
-    .attr("transform", "translate(100,0)")
-    .attr('id','yaxis')
-    .call(yAxis);
-
-  var x_xis = canvas.append('g')
-    .attr("transform", "translate(100,450)")
-    .attr('id','xaxis')
-    .call(xAxis);
-
-  color = productsColors[products.indexOf(getSelectedProduct())]
-  opacity = 1.0
-  //rgbacolor = 'rgba('+color[0]+','+color[1]+','+color[2]+','+(opacity-=0.05)+')'
-  var chart = canvas.append('g')
-    .attr("transform", "translate(100,0)")
-    .attr('id','bars')
-    .selectAll('rect')
-    .data(dollars)
-    .enter()
-    .append('rect')
-    .attr('height',19)
-    .attr({'x':0,'y':function(d,i){ return yscale(i)+19; }})
-    .style('fill',function(d,i){ return 'rgba('+color[0]+','+color[1]+','+color[2]+','+(opacity-=0.02)+')'; })
-    .attr('width',function(d){ return 0; })
-    .on("mousemove", function(d){
-          val = Math.floor(parseFloat(getCountryExport(15)[dollars.indexOf(d)][1])/1000)
-            tooltip
-              .style("left", d3.event.pageX - 50 + "px")
-              .style("top", d3.event.pageY - 70 + "px")
-              .style("display", "inline-block")
-              .html(val+" US($) Millions");
-        })
-    		.on("mouseout", function(d){ tooltip.style("display", "none");});;
+    svg.select("#dollars_axis").selectAll(".tick").each(function(element){
+      var tick = d3.select(this)
+      var translate = d3.transform(tick.attr("transform")).translate;
+      grid.push(translate[0])
+    })
+    svg.append("g")
+       .attr("transform","translate("+padding_left+",0)")
+       .attr("id","names_axis")
+       .selectAll("rect")
+        .data(grid)
+          .enter().append("rect")
+          .attr("height",h-(padding_bottom*1.5))
+          .attr("width", "1")
+          .attr("x" , function(d){ return d; })
+          .style({'stroke':'#adadad','stroke-width':'1px'})
+  }
 
 
-  var transit = d3.select("svg").selectAll("rect")
-    .data(dollars)
+
+
+  var transit_bars = svg.selectAll("rect")
+    .data(l)
     .transition()
-    .duration(1000)
-    .attr("width", function(d) {return xscale(d); });
+    .duration(500)
+    .attr("width",function(d){ return hscale(d[1])});
 
-  /*
-  var transitext = d3.select('#bars')
-    .selectAll('text')
-    .data(dollars)
-    .enter()
-    .append('text')
-    .attr({'x':function(d) {return xscale(d)-100; },'y':function(d,i){ return yscale(i)+35; } })
-    .text(function(d){ return d+"$"; }).style({'fill':'#fff','font-size':'14px'});
-  */
 
-  d3.select('#bar_chart svg #yaxis').selectAll('text').attr('font-size','12px')
 
 }
