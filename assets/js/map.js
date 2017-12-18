@@ -18,7 +18,7 @@ function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
 
         //projection: 'mercator',
         done: function(datamap) {
-
+          interactFlowMap(datamap)
         }
       });
     }else{
@@ -69,6 +69,8 @@ function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
       	datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
     datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+      selectedCountry = geography.properties.name
+      refreshDotMatrixChart(selectedCountry,chart_options)
       console.log(geography.properties.name);
       console.log(geography)
     });
@@ -118,12 +120,12 @@ function fillCloropleth(product){
   thirdV = no_zeros[(step-1)*2]
   fourthV = no_zeros[(step-1)*3]
   fifthV = no_zeros[no_zeros.length - 1]
-
+/*
   console.log(firstV)
   console.log(secondV)
   console.log(thirdV)
   console.log(fourthV)
-  console.log(fifthV)
+  console.log(fifthV)*/
   $('#bar-cloropleth > div:first-child').html("<p>Undefined</p>")
   $('#bar-cloropleth > div:nth-child(2)').html("<p>"+Math.floor(firstV/1000)+" - "+Math.floor(secondV/1000)+"</p>")
   $('#bar-cloropleth > div:nth-child(3)').html("<p>"+Math.floor(secondV/1000)+" - "+Math.floor(thirdV/1000)+"</p>")

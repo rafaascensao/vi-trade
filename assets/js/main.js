@@ -3,7 +3,7 @@ var dataset;
 var countries_map;
 var min_year = 1989, max_year = 2015;
 var year = 2004;
-var selectedCountry = "Portugal"
+var selectedCountry = "China"
 var countries;
 var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"];
 //var productfile = {"Textiles and Clothing", "Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"}
@@ -35,7 +35,7 @@ function startViews(){
   $('.description > div.selected').click()
   startBarchart()
   $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
-  startDataDotMatrix("Portugal",chart_options)
+  startDataDotMatrix(selectedCountry,chart_options)
 
 }
 
@@ -387,14 +387,14 @@ function DotMatrixChart(data,options){
   }
 
   var num_columns = Math.ceil((w - padding_left) / (radius * 3))-1
-
+  list = generateCircleElement(data)
   var circles = svg.select(".circles")
                   .selectAll("circle")
-                  .data(generateCircleElement(data))
+                  .data(list)
                     .enter()
                     .append("circle")
                     .attr("fill", function(d){ return "rgb("+productsColors[products.indexOf(d["category"])][0]+","+productsColors[products.indexOf(d["category"])][1]+","+productsColors[products.indexOf(d["category"])][2]+")" })
-                    .attr("r",radius)
+                    .attr("r",0)
                     .attr("cx", function(d,i){
                        x = i / num_columns
                        y = parseInt(x)
@@ -404,6 +404,13 @@ function DotMatrixChart(data,options){
                        x = Math.floor(i / num_columns) - 1
                        return x * (radius * 3)
                     })
+
+  var transitions = svg.select(".circles")
+                      .selectAll("circle")
+                      .data(list)
+                      .transition()
+                      .duration(500)
+                      .attr("r",radius)
 }
 
 function refreshDotMatrixChart(country, options){
