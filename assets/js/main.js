@@ -45,7 +45,7 @@ function startViews(){
   startMap()
   $('.description > div.selected').click()
   startBarchart()
-//  $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
+  $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
   DotMatrixChart(data, chart_options)
 
 }
@@ -364,7 +364,7 @@ function qwestartBarchart(){
 }
 
 
-
+/* DOT MATRIX CHART */
 function DotMatrixChart(data,options){
   var h = $('.dot_matrix_chart').height()
   var w = $('.dot_matrix_chart').width()
@@ -412,3 +412,7 @@ function DotMatrixChart(data,options){
                        return x * (radius * 3)
                     })
 }
+
+
+/* LINE CHART */
+// http://bl.ocks.org/asielen/44ffca2877d0132572cb
