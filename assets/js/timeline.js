@@ -24,6 +24,7 @@ function startTimeline(){
       year = ui.value
       fillCloropleth(getSelectedProduct())
       refreshBarChart()
+      refreshDotMatrixChart(selectedCountry,chart_options)
     }
   });
   $('.timeline .slider .slide').append("<div class='left-slide'><div class='min-max-year'>1989</div></div><div class='right-slide'><div class='min-max-year'>2015</div></div>")
