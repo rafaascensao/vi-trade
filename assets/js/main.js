@@ -376,6 +376,8 @@ function DotMatrixChart(data,options){
   var xScale = d3.scale.linear().range([0,w])
   var yScale = d3.scale.linear().range([0,h])
 
+  var valuesDot = getDataDotMatrix("Portugal",options)
+  console.log(valuesDot)
   var svg = d3.select(".dot_matrix_chart")
               .append("svg")
               .attr("width", w)
@@ -387,6 +389,7 @@ function DotMatrixChart(data,options){
   function generateCircleElement(data){
     var l = []
     data.forEach(function(el){
+      console.log(el)
       for(step = 0; step < el["count"] ; step++)
         l.push({ category: el["category"]})
     })
@@ -397,7 +400,7 @@ function DotMatrixChart(data,options){
 
   var circles = svg.select(".circles")
                   .selectAll("circle")
-                  .data(generateCircleElement(data))
+                  .data(generateCircleElement(valuesDot))
                     .enter()
                     .append("circle")
                     .attr("fill", function(d){ return "rgb("+productsColors[products.indexOf(d["category"])][0]+","+productsColors[products.indexOf(d["category"])][1]+","+productsColors[products.indexOf(d["category"])][2]+")" })
@@ -413,6 +416,63 @@ function DotMatrixChart(data,options){
                     })
 }
 
+
+function getDataDotMatrix(country,options) {
+  var w = $('.dot_matrix_chart').width()
+  var radius = options["dot_radius"]
+  var padding_left = 40
+  var padding_top = 60
+  var num_columns = Math.ceil((w - padding_left) / (radius * 3))-1
+  var num_lines = 7
+  var entries = num_columns * num_lines
+  var valuesDot = []
+  var i = 0
+  d3.csv("../../dataGather/derived.csv", function(data){
+      dot = computeDotValue(country, data, entries)
+      products.forEach(function(product){
+        valuesDot[i] = {}
+        results = data.filter(function(element){
+          return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';
+        })
+        valuesDot[i]['category'] = product
+        valuesDot[i]['count'] = Math.round(results[0][year] / dot)
+        i++
+      })
+  })
+  return valuesDot
+}
+
+function computeDotValue(country, data, entries) {
+  sum = 0
+  products.forEach(function(product){
+    results = data.filter(function(element){
+      return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';})
+    sum = sum + parseInt(results[0][year])
+  })
+  return sum / entries
+}
+
+/*function getSumProducts(listProducts){
+  // QUERY
+  all = {}
+  var sums;
+  d3.csv("../../dataGather/derived.csv", function(data){
+  listProducts.forEach(function(product){
+  	 console.log("Computing " + product)
+  	 count = {}
+  	 countries.forEach(function(country){
+        results = data.filter(function(element){
+          return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export'; })
+		    count[country] = {}
+        for(i = min_year; i <= max_year; i++){
+          count[country][i] = results[0][i]
+        }
+      })
+    all[product] = count
+  	})
+  	globalProducts = all
+  })
+}*/
 
 /* LINE CHART */
 // http://bl.ocks.org/asielen/44ffca2877d0132572cb
