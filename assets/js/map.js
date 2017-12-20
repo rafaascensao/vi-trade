@@ -71,6 +71,7 @@ function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
     datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
       selectedCountry = geography.properties.name
       refreshDotMatrixChart(selectedCountry,chart_options)
+      getLineData(selectedCountry,min_year,max_year)
       console.log(geography.properties.name);
       console.log(geography)
     });

@@ -443,8 +443,7 @@ function computeDotValue(country, data, entries) {
   sum = 0
   products.forEach(function(product){
     results = data.filter(function(element){
-      return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';
-    })
+      return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';})
     sum = sum + parseInt(results[0][year])
   })
   return sum / entries
@@ -488,17 +487,24 @@ function getLineData(country, initialYear, finalYear){
         results = data.filter(function(element){
         return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';
       })
-      lineSet[i][product] = parseInt(results[0][j])
+      lineSet[i][product] = parseInt(results[0][j] / 1000)
       })
     i++
     }
+    makeLineChart(lineSet,xName,yObjs, axisLables)
   })
-  return lineSet
+
 }
 
+var chartObj = {};
+
 function makeLineChart(dataset, xName, yObjs, axisLables){
-  var chartObj = {};
-  var color = d3.scale.category10();
+  console.log(2131232)
+  if( $('.line_chart .inner-wrapper').length > 0){
+    chartObj.updateChart(dataset,xName,yObjs,axisLables)
+    return chartObj;
+  }
+
   chartObj.xAxisLable = axisLables.xAxis;
   chartObj.yAxisLable = axisLables.yAxis;
 
@@ -684,6 +690,69 @@ function makeLineChart(dataset, xName, yObjs, axisLables){
       focus.select(".focus.year").text("Year: " + chartObj.xFormatter(chartObj.xFunct(d)));
     }
   };
+
+  chartObj.updateChart = function(dataset,xName,yObjs,axisLables){
+    chartObj.xAxisLable = axisLables.xAxis;
+    chartObj.yAxisLable = axisLables.yAxis;
+
+    chartObj.data = dataset;
+    chartObj.margin = {top: 10, right: 30, bottom: 30, left: 50};
+    chartObj.width = 650 - chartObj.margin.left - chartObj.margin.right;
+    chartObj.height = 300 - chartObj.margin.top - chartObj.margin.bottom;
+
+    // So we can pass the x and y as strings when creating the function
+    chartObj.xFunct = function(d){return d[xName]};
+
+
+    // Object instead of array
+    chartObj.yFuncts = [];
+    for (var y  in yObjs) {
+        yObjs[y].name = y;
+        yObjs[y].yFunct = getYFn(yObjs[y].column); //Need this  list for the ymax function
+        chartObj.yFuncts.push(yObjs[y].yFunct);
+    }
+
+    //Formatter functions for the axes
+    chartObj.formatAsNumber = d3.format(".0f");
+    chartObj.formatAsDecimal = d3.format(".2f");
+    chartObj.formatAsCurrency = d3.format("$.2f");
+
+
+    chartObj.xFormatter = chartObj.formatAsNumber;
+    chartObj.yFormatter = chartObj.formatAsFloat;
+
+    chartObj.bisectYear = d3.bisector(chartObj.xFunct).left; //< Can be overridden in definition
+
+    //Create scale functions
+    chartObj.xScale = d3.scale.linear().range([0, chartObj.width]).domain(d3.extent(chartObj.data, chartObj.xFunct)); //< Can be overridden in definition
+
+    // Get the max of every yFunct
+    chartObj.max = function (fn) {
+        return d3.max(chartObj.data, fn);
+    };
+    chartObj.yScale = d3.scale.linear().range([chartObj.height, 0]).domain([0, d3.max(chartObj.yFuncts.map(chartObj.max))]);
+
+    chartObj.formatAsYear = d3.format("");
+
+    //Create axis
+    chartObj.xAxis = d3.svg.axis().scale(chartObj.xScale).orient("bottom").tickFormat(chartObj.xFormatter); //< Can be overridden in definition
+
+    chartObj.yAxis = d3.svg.axis().scale(chartObj.yScale).orient("left").tickFormat(chartObj.yFormatter); //< Can be overridden in definition
+
+
+    for (var yObj in yObjs) {
+        yObjs[yObj].line = d3.svg.line().interpolate("cardinal").x(function (d) {
+            return chartObj.xScale(chartObj.xFunct(d));
+        }).y(getYScaleFn(yObj));
+    }
+
+    chartObj.svg;
+    $('.inner-wrapper').remove()
+    chartObj.bind(".line_chart")
+    chartObj.render()
+  }
+  chartObj.bind(".line_chart")
+  chartObj.render()
   return chartObj;
 }
 // http://bl.ocks.org/asielen/44ffca2877d0132572cb
