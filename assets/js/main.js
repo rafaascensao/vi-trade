@@ -476,6 +476,22 @@ yObjs = { 'Textiles and Clothing': {column: 'Textiles and Clothing' , color: pro
         }
 axisLables = {xAxis: 'Years', yAxis: 'Amount'}
 
+function getLineData(country, initialYear, finalYear){
+  var data = []
+  var i = 0
+  for(j = initialYear; j <= finalYear; j++){
+    data[i] = {}
+    data[i]["year"] = j
+    products.forEach(function(product){
+      results = data.filter(function(element){
+        return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';
+      })
+      data[i][product] = results[0][j]
+    })
+    i++
+  }
+}
+
 function makeLineChart(dataset, xName, yObjs, axisLables){
   var chartObj = {};
   var color = d3.scale.category10();
