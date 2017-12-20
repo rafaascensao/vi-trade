@@ -629,7 +629,7 @@ function makeLineChart(dataset, xName, yObjs, axisLables){
     // Draw Lines
     for (var y  in yObjs) {
       stroke_color = "rgb("+productsColors[products.indexOf(y)][0]+","+productsColors[products.indexOf(y)][1]+","+productsColors[products.indexOf(y)][2]+")"
-      yObjs[y].path = chartObj.svg.append("path").datum(chartObj.data).attr("class", "line").attr("d", yObjs[y].line).style("stroke", stroke_color /*productsColors[products.indexOf(y)]*/).attr("data-series", y).on("mouseover", function () {
+      yObjs[y].path = chartObj.svg.append("path").datum(chartObj.data).attr("class", "line").attr("d", yObjs[y].line).style("stroke", stroke_color /*productsColors[products.indexOf(y)]*/).style("stroke-width", "2px").attr("data-series", y).on("mouseover", function () {
           focus.style("display", null);
       }).on("mouseout", function () {
           focus.transition().delay(700).style("display", "none");
