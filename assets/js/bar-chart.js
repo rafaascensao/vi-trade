@@ -132,15 +132,10 @@ function startBarchart(){
           .style({'stroke':'#adadad','stroke-width':'1px'})
   }
 
-
-
-
   var transit_bars = svg.selectAll("rect")
     .data(l)
     .transition()
     .duration(500)
     .attr("width",function(d){ return hscale(d[1])});
-
-
 
 }

@@ -419,8 +419,8 @@ function refreshDotMatrixChart(country, options){
 function startDataDotMatrix(country,options) {
   var w = $('.dot_matrix_chart').width()
   var radius = options["dot_radius"]
-  var padding_left = 40
-  var padding_top = 60
+  var padding_left = 40 // options["padding_left"]
+  var padding_top = 60 // options["padding_left"]
   var num_columns = Math.ceil((w - padding_left) / (radius * 3))-1
   var num_lines = 7
   var entries = num_columns * num_lines
@@ -449,27 +449,221 @@ function computeDotValue(country, data, entries) {
   return sum / entries
 }
 
-/*function getSumProducts(listProducts){
-  // QUERY
-  all = {}
-  var sums;
-  d3.csv("../../dataGather/derived.csv", function(data){
-  listProducts.forEach(function(product){
-  	 console.log("Computing " + product)
-  	 count = {}
-  	 countries.forEach(function(country){
-        results = data.filter(function(element){
-          return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export'; })
-		    count[country] = {}
-        for(i = min_year; i <= max_year; i++){
-          count[country][i] = results[0][i]
-        }
-      })
-    all[product] = count
-  	})
-  	globalProducts = all
-  })
-}*/
-
 /* LINE CHART */
+
+linechartSet = [ {"year":1980 , "Textiles and Clothing": 80 , "Wood": 100, "Minerals": 0, "Food Products": 10, "Chemicals": 40,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
+            {"year":1981 , "Textiles and Clothing": 180 , "Wood": 123, "Minerals": 0, "Food Products": 30, "Chemicals": 10,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
+            {"year":1982 , "Textiles and Clothing": 280 , "Wood": 213, "Minerals": 0, "Food Products": 60, "Chemicals": 30,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
+            {"year":1983 , "Textiles and Clothing": 380 , "Wood": 136, "Minerals": 0, "Food Products": 80, "Chemicals": 60,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
+            {"year":1984 , "Textiles and Clothing": 480 , "Wood": 174, "Minerals": 0, "Food Products": 30, "Chemicals": 40,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
+            {"year":1985 , "Textiles and Clothing": 580 , "Wood": 102, "Minerals": 0, "Food Products": 20, "Chemicals": 70,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
+            {"year":1986 , "Textiles and Clothing": 680 , "Wood": 98, "Minerals": 0, "Food Products": 10, "Chemicals": 10,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
+            {"year":1987 , "Textiles and Clothing": 780 , "Wood": 210, "Minerals": 0, "Food Products": 6,  "Chemicals": 63,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
+            {"year":1988 , "Textiles and Clothing": 880 , "Wood": 150, "Minerals": 0, "Food Products": 50, "Chemicals": 52,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
+            {"year":1989 , "Textiles and Clothing": 980 , "Wood": 150, "Minerals": 0, "Food Products": 10, "Chemicals": 12,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0}
+
+          ]
+xName = "year"
+yObjs = { 'Textiles and Clothing': {column: 'Textiles and Clothing' , color: productsColors[products.indexOf('Textiles and Clothing')]} ,
+          'Wood': {column: 'Wood' , color: productsColors[products.indexOf('Wood')]} ,
+          'Minerals': {column: 'Minerals' , color: productsColors[products.indexOf('Minerals')]} ,
+          'Food Products': {column: 'Food Products' , color: productsColors[products.indexOf('Food Products')]},
+          'Chemicals': {column: 'Chemicals' , color: productsColors[products.indexOf('Chemicals')]} ,
+          'Plastic or Rubber': {column: 'Plastic or Rubber' , color: productsColors[products.indexOf('Plastic or Rubber')]} ,
+          'Animal': {column: 'Animal' , color: productsColors[products.indexOf('Animal')]} ,
+          'Fuels': {column: 'Fuels' , color: productsColors[products.indexOf('Fuels')]} ,
+          'Mach and Elec': {column: 'Mach and Elec' , color: productsColors[products.indexOf('Mach and Elec')]}
+        }
+axisLables = {xAxis: 'Years', yAxis: 'Amount'}
+
+function makeLineChart(dataset, xName, yObjs, axisLables){
+  var chartObj = {};
+  var color = d3.scale.category10();
+  chartObj.xAxisLable = axisLables.xAxis;
+  chartObj.yAxisLable = axisLables.yAxis;
+
+  chartObj.data = dataset;
+  chartObj.margin = {top: 10, right: 30, bottom: 30, left: 50};
+  chartObj.width = 650 - chartObj.margin.left - chartObj.margin.right;
+  chartObj.height = 300 - chartObj.margin.top - chartObj.margin.bottom;
+
+  // So we can pass the x and y as strings when creating the function
+  chartObj.xFunct = function(d){return d[xName]};
+
+  // For each yObjs argument, create a yFunction
+  function getYFn(column) {
+      return function (d) {
+          return d[column];
+      };
+  }
+
+  // Object instead of array
+  chartObj.yFuncts = [];
+  for (var y  in yObjs) {
+      yObjs[y].name = y;
+      yObjs[y].yFunct = getYFn(yObjs[y].column); //Need this  list for the ymax function
+      chartObj.yFuncts.push(yObjs[y].yFunct);
+  }
+
+  //Formatter functions for the axes
+  chartObj.formatAsNumber = d3.format(".0f");
+  chartObj.formatAsDecimal = d3.format(".2f");
+  chartObj.formatAsCurrency = d3.format("$.2f");
+  chartObj.formatAsFloat = function (d) {
+      if (d % 1 !== 0) {
+          return d3.format(".2f")(d);
+      } else {
+          return d3.format(".0f")(d);
+      }
+  };
+
+  chartObj.xFormatter = chartObj.formatAsNumber;
+  chartObj.yFormatter = chartObj.formatAsFloat;
+
+  chartObj.bisectYear = d3.bisector(chartObj.xFunct).left; //< Can be overridden in definition
+
+  //Create scale functions
+  chartObj.xScale = d3.scale.linear().range([0, chartObj.width]).domain(d3.extent(chartObj.data, chartObj.xFunct)); //< Can be overridden in definition
+
+  // Get the max of every yFunct
+  chartObj.max = function (fn) {
+      return d3.max(chartObj.data, fn);
+  };
+  chartObj.yScale = d3.scale.linear().range([chartObj.height, 0]).domain([0, d3.max(chartObj.yFuncts.map(chartObj.max))]);
+
+  chartObj.formatAsYear = d3.format("");
+
+  //Create axis
+  chartObj.xAxis = d3.svg.axis().scale(chartObj.xScale).orient("bottom").tickFormat(chartObj.xFormatter); //< Can be overridden in definition
+
+  chartObj.yAxis = d3.svg.axis().scale(chartObj.yScale).orient("left").tickFormat(chartObj.yFormatter); //< Can be overridden in definition
+
+  // Build line building functions
+  function getYScaleFn(yObj) {
+      return function (d) {
+          return chartObj.yScale(yObjs[yObj].yFunct(d));
+      };
+  }
+  for (var yObj in yObjs) {
+      yObjs[yObj].line = d3.svg.line().interpolate("cardinal").x(function (d) {
+          return chartObj.xScale(chartObj.xFunct(d));
+      }).y(getYScaleFn(yObj));
+  }
+
+  chartObj.svg;
+
+  // Change chart size according to window size
+  chartObj.update_svg_size = function () {
+    chartObj.width = (parseInt(chartObj.chartDiv.style("width"), 10) - (chartObj.margin.left + chartObj.margin.right)) ;
+    chartObj.height = (parseInt(chartObj.chartDiv.style("height"), 10) - (chartObj.margin.top + chartObj.margin.bottom)) * 0.6 ;
+
+    /* Update the range of the scale with new width/height */
+    chartObj.xScale.range([0, chartObj.width]);
+    chartObj.yScale.range([chartObj.height, 0]);
+
+    if (!chartObj.svg) {return false;}
+
+    /* Else Update the axis with the new scale */
+    chartObj.svg.select('.x.axis').attr("transform", "translate(0," + chartObj.height + ")").call(chartObj.xAxis);
+    chartObj.svg.select('.x.axis .label').attr("x", chartObj.width / 2);
+
+    chartObj.svg.select('.y.axis').call(chartObj.yAxis);
+    chartObj.svg.select('.y.axis .label').attr("x", -chartObj.height / 2);
+
+    /* Force D3 to recalculate and update the line */
+    for (var y  in yObjs) {
+        yObjs[y].path.attr("d", yObjs[y].line);
+    }
+
+
+    d3.selectAll(".focus.line").attr("y2", chartObj.height);
+
+    chartObj.chartDiv.select('svg').attr("width", chartObj.width + (chartObj.margin.left + chartObj.margin.right)).attr("height", chartObj.height + (chartObj.margin.top + chartObj.margin.bottom));
+
+    chartObj.svg.select(".overlay").attr("width", chartObj.width).attr("height", chartObj.height);
+    return chartObj;
+  };
+
+  chartObj.bind = function (selector) {
+    chartObj.mainDiv = d3.select(selector);
+    // Add all the divs to make it centered and responsive
+    chartObj.mainDiv.append("div").attr("class", "inner-wrapper").append("div").attr("class", "outer-box").append("div").attr("class", "inner-box");
+    chartSelector = selector + " .inner-box";
+    chartObj.chartDiv = d3.select(chartSelector);
+    d3.select(window).on('resize.' + chartSelector, chartObj.update_svg_size);
+    chartObj.update_svg_size();
+    return chartObj;
+  };
+
+  // Render the chart
+  chartObj.render = function () {
+    //Create SVG element
+    chartObj.svg = chartObj.chartDiv.append("svg").attr("class", "chart-area").attr("width", chartObj.width + (chartObj.margin.left + chartObj.margin.right)).attr("height", chartObj.height + (chartObj.margin.top + chartObj.margin.bottom)).append("g").attr("transform", "translate(" + chartObj.margin.left + "," + chartObj.margin.top + ")");
+
+    // Draw Lines
+    for (var y  in yObjs) {
+      stroke_color = "rgb("+productsColors[products.indexOf(y)][0]+","+productsColors[products.indexOf(y)][1]+","+productsColors[products.indexOf(y)][2]+")"
+      yObjs[y].path = chartObj.svg.append("path").datum(chartObj.data).attr("class", "line").attr("d", yObjs[y].line).style("stroke", stroke_color /*productsColors[products.indexOf(y)]*/).attr("data-series", y).on("mouseover", function () {
+          focus.style("display", null);
+      }).on("mouseout", function () {
+          focus.transition().delay(700).style("display", "none");
+      }).on("mousemove", mousemove);
+    }
+
+
+    // Draw Axis
+    chartObj.svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + chartObj.height + ")").call(chartObj.xAxis).append("text").attr("class", "label").attr("x", chartObj.width / 2).attr("y", 30).style("text-anchor", "middle").text(chartObj.xAxisLable);
+
+    chartObj.svg.append("g").attr("class", "y axis").call(chartObj.yAxis).append("text").attr("class", "label").attr("transform", "rotate(-90)").attr("y", -42).attr("x", -chartObj.height / 2).attr("dy", ".71em").style("text-anchor", "middle").text(chartObj.yAxisLable);
+
+    //Draw tooltips
+    var focus = chartObj.svg.append("g").attr("class", "focus").style("display", "none");
+
+    for (var y  in yObjs) {
+      yObjs[y].tooltip = focus.append("g");
+      yObjs[y].tooltip.append("circle").attr("r", 5);
+      yObjs[y].tooltip.append("rect").attr("x", 8).attr("y","-5").attr("width",22).attr("height",'0.75em');
+      yObjs[y].tooltip.append("text").attr("x", 9).attr("dy", ".35em");
+    }
+
+    // Year label
+    focus.append("text").attr("class", "focus year").attr("x", 9).attr("y", 7);
+    // Focus line
+    focus.append("line").attr("class", "focus line").attr("y1", 0).attr("y2", chartObj.height);
+
+    //Draw legend
+    //var legend = chartObj.mainDiv.append('div').attr("class", "legend");
+    //for (var y  in yObjs) {
+    //  series = legend.append('div');
+    //  series.append('div').attr("class", "series-marker").style("background-color", color(y));
+    //  series.append('p').text(y);
+    //  yObjs[y].legend = series;
+    //}
+
+    // Overlay to capture hover
+    chartObj.svg.append("rect").attr("class", "overlay").attr("width", chartObj.width).attr("height", chartObj.height).on("mouseover", function () {
+      focus.style("display", null);
+    }).on("mouseout", function () {
+      focus.style("display", "none");
+    }).on("mousemove", mousemove);
+
+    return chartObj;
+    function mousemove() {
+      var x0 = chartObj.xScale.invert(d3.mouse(this)[0]), i = chartObj.bisectYear(dataset, x0, 1), d0 = chartObj.data[i - 1], d1 = chartObj.data[i];
+      try {
+          var d = x0 - chartObj.xFunct(d0) > chartObj.xFunct(d1) - x0 ? d1 : d0;
+      } catch (e) { return;}
+      minY = chartObj.height;
+      for (var y  in yObjs) {
+          yObjs[y].tooltip.attr("transform", "translate(" + chartObj.xScale(chartObj.xFunct(d)) + "," + chartObj.yScale(yObjs[y].yFunct(d)) + ")");
+          yObjs[y].tooltip.select("text").text(chartObj.yFormatter(yObjs[y].yFunct(d)));
+          minY = Math.min(minY, chartObj.yScale(yObjs[y].yFunct(d)));
+      }
+
+      focus.select(".focus.line").attr("transform", "translate(" + chartObj.xScale(chartObj.xFunct(d)) + ")").attr("y1", minY);
+      focus.select(".focus.year").text("Year: " + chartObj.xFormatter(chartObj.xFunct(d)));
+    }
+  };
+  return chartObj;
+}
 // http://bl.ocks.org/asielen/44ffca2877d0132572cb
