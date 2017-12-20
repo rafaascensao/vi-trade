@@ -443,7 +443,8 @@ function computeDotValue(country, data, entries) {
   sum = 0
   products.forEach(function(product){
     results = data.filter(function(element){
-      return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';})
+      return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';
+    })
     sum = sum + parseInt(results[0][year])
   })
   return sum / entries
@@ -477,19 +478,22 @@ yObjs = { 'Textiles and Clothing': {column: 'Textiles and Clothing' , color: pro
 axisLables = {xAxis: 'Years', yAxis: 'Amount'}
 
 function getLineData(country, initialYear, finalYear){
-  var data = []
-  var i = 0
-  for(j = initialYear; j <= finalYear; j++){
-    data[i] = {}
-    data[i]["year"] = j
-    products.forEach(function(product){
-      results = data.filter(function(element){
+  var lineSet = []
+  d3.csv("../../dataGather/derived.csv", function(data){
+    var i = 0
+    for(j = initialYear; j <= finalYear; j++){
+      lineSet[i] = {}
+      lineSet[i]["year"] = j
+      products.forEach(function(product){
+        results = data.filter(function(element){
         return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';
       })
-      data[i][product] = results[0][j]
-    })
+      lineSet[i][product] = parseInt(results[0][j])
+      })
     i++
-  }
+    }
+  })
+  return lineSet
 }
 
 function makeLineChart(dataset, xName, yObjs, axisLables){
