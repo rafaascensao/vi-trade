@@ -46,7 +46,7 @@ with open(filename, 'w') as fimp:
             wr.writerow(myList) 
             print('Import: ' + country + 'Product: ' + p)
             myList = [country, 'Import', p]
-            sums = calculateSumForReporter(country, dfExport, p)
+            sums = calculateSumForPartner(country, dfExport, p)
             myList.extend(sums)
             myList.append(sumRow(sums))
             wr.writerow(myList)
