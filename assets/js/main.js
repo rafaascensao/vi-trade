@@ -432,63 +432,39 @@ function startDataDotMatrix(country,options) {
   var num_lines = 7
   var entries = num_columns * num_lines
   var i = 0
-  d3.csv("../../dataGather/derived.csv", function(data){
-      var valuesDot = []
-      var results;
-      dot = computeDotValue(country, data, entries)
-      products.forEach(function(product){
-        results = data.filter(function(element){
-          return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';
-        })
-        if(typeof results[0] === 'undefined'){
-              countryName = getKeyByValue(countriesCodes, selectedCode)
-              results = data.filter(function(element){
-                return element["Product Group"] == product && element["Reporter Name"] == countryName && element["Trade Flow"] == 'Export';
-              })
-          }
-        valuesDot.push({ 'category' : product ,
-                         'count' : Math.round(results[0][year] / dot)})
+  var valuesDot = []
+  var results;
+  dot = computeDotValue(country, globalProducts, entries)
+  products.forEach(function(product){
+      results = globalProducts[product][country]
+      if(typeof results === 'undefined'){
+            countryName = getKeyByValue(countriesCodes, selectedCode)
+            results = globalProducts[product][countryName]
+      }
+      valuesDot.push({ 'category' : product ,
+                       'count' : Math.round(results[year] / dot)})
       })
       valuesDot = valuesDot.sort(function(a,b){return b.count-a.count})
       //console.log(valuesDot)
       DotMatrixChart(valuesDot, options)
-  })
 }
 
 function computeDotValue(country, data, entries) {
   sum = 0
   var results;
   products.forEach(function(product){
-    results = data.filter(function(element){
-      return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';
-    })
-    if(typeof results[0] === 'undefined'){
-      console.log("im in")
+    results = data[product][country]
+    if(typeof results === 'undefined'){
       countryName = getKeyByValue(countriesCodes, selectedCode)
-      console.log(countryName)
-      results = data.filter(function(element){
-          return element["Product Group"] == product && element["Reporter Name"] == countryName && element["Trade Flow"] == 'Export';
-      })
+      results = globalProducts[product][countryName]
       }
-    sum = sum + parseInt(results[0][year])
+    sum = sum + parseInt(results[year])
   })
   return sum / entries
 }
 
 /* LINE CHART */
 
-linechartSet = [ {"year":1980 , "Textiles and Clothing": 80 , "Wood": 100, "Minerals": 0, "Food Products": 10, "Chemicals": 40,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
-            {"year":1981 , "Textiles and Clothing": 180 , "Wood": 123, "Minerals": 0, "Food Products": 30, "Chemicals": 10,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
-            {"year":1982 , "Textiles and Clothing": 280 , "Wood": 213, "Minerals": 0, "Food Products": 60, "Chemicals": 30,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
-            {"year":1983 , "Textiles and Clothing": 380 , "Wood": 136, "Minerals": 0, "Food Products": 80, "Chemicals": 60,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
-            {"year":1984 , "Textiles and Clothing": 480 , "Wood": 174, "Minerals": 0, "Food Products": 30, "Chemicals": 40,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
-            {"year":1985 , "Textiles and Clothing": 580 , "Wood": 102, "Minerals": 0, "Food Products": 20, "Chemicals": 70,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
-            {"year":1986 , "Textiles and Clothing": 680 , "Wood": 98, "Minerals": 0, "Food Products": 10, "Chemicals": 10,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
-            {"year":1987 , "Textiles and Clothing": 780 , "Wood": 210, "Minerals": 0, "Food Products": 6,  "Chemicals": 63,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
-            {"year":1988 , "Textiles and Clothing": 880 , "Wood": 150, "Minerals": 0, "Food Products": 50, "Chemicals": 52,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0},
-            {"year":1989 , "Textiles and Clothing": 980 , "Wood": 150, "Minerals": 0, "Food Products": 10, "Chemicals": 12,"Plastic or Rubber": 80,"Animal": 220,"Fuels": 100,"Mach and Elec": 0}
-
-          ]
 xName = "year"
 yObjs = { 'Textiles and Clothing': {column: 'Textiles and Clothing' , color: productsColors[products.indexOf('Textiles and Clothing')]} ,
           'Wood': {column: 'Wood' , color: productsColors[products.indexOf('Wood')]} ,
@@ -504,29 +480,22 @@ axisLables = {xAxis: 'Years', yAxis: 'Amount'}
 
 function getLineData(country, initialYear, finalYear){
   var lineSet = []
-  d3.csv("../../dataGather/derived.csv", function(data){
-    var i = 0
-    for(j = initialYear; j <= finalYear; j++){
-      lineSet[i] = {}
-      lineSet[i]["year"] = j
-      var results;
-      products.forEach(function(product){
-        results = data.filter(function(element){
-        return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == 'Export';
-      })
-      if(typeof results[0] === 'undefined'){
-            countryName = getKeyByValue(countriesCodes, selectedCode)
-          results = data.filter(function(element){
-            return element["Product Group"] == product && element["Reporter Name"] == countryName && element["Trade Flow"] == 'Export';
-          })
+  var i = 0
+  for(j = initialYear; j <= finalYear; j++){
+    lineSet[i] = {}
+    lineSet[i]["year"] = j
+    var results;
+    products.forEach(function(product){
+      results = globalProducts[product][country]
+      if(typeof results === 'undefined'){
+          countryName = getKeyByValue(countriesCodes, selectedCode)
+          results = globalProducts[product][countryName]
       }
-      lineSet[i][product] = parseInt(results[0][j] / 1000)
+      lineSet[i][product] = parseInt(results[j] / 1000)
       })
     i++
     }
     makeLineChart(lineSet,xName,yObjs, axisLables)
-  })
-
 }
 
 var chartObj = {};
@@ -802,8 +771,6 @@ function generateDataDot(country1, country2, year) {
   //dataDot[i] = {"name" : products[i] , productvaluecountry1 : 70 , "max" : productvaluecountry2 , "min_country" : country1 , "max_country" : country2 }
   return dataDot
 }
-
-
 
 function clevelandDotPlot(){
   clevChart = {}
