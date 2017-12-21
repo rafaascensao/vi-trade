@@ -38,8 +38,7 @@ function startViews(){
   startBarchart()
   $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
   startDataDotMatrix(selectedCountry,chart_options)
-  clevChart = clevelandDotPlot(generateDataDot("Portugal","Spain",2000))
-  clevChart.render()
+  clevChart = clevelandDotPlot()
 }
 
 function checkReady(){
@@ -802,18 +801,8 @@ function generateDataDot(country1, country2, year) {
 }
 
 
-dataDot = [ {"name" : products[0] , "min" : 70 , "max" : 89 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[1] , "min" : 10 , "max" : 30 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[2] , "min" : 30 , "max" : 35 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[3] , "min" : 60 , "max" : 90 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[4] , "min" : 40 , "max" : 60 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[5] , "min" : 10 , "max" : 18 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[6] , "min" : 55 , "max" : 80 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[7] , "min" : 5 , "max" : 30 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[8] , "min" : 10 , "max" : 22 , "min_country" : "Portugal" , "max_country" : "Spain" }
-          ]
 
-function clevelandDotPlot(data){
+function clevelandDotPlot(){
   clevChart = {}
 
   clevChart.appendChart = function(){
@@ -858,7 +847,7 @@ function clevelandDotPlot(data){
 
     // Make the faint lines from y labels to highest dot
     clevChart.linesGrid = clevChart.svg.selectAll("lines.grid")
-                                      .data(data)
+                                      .data(clevChart.data)
                                       .enter()
                                       .append("line")
 
@@ -876,7 +865,7 @@ function clevelandDotPlot(data){
 
     // Make the dotted lines between the dots
     clevChart.linesBetween = clevChart.svg.selectAll("lines.between")
-    			.data(data)
+    			.data(clevChart.data)
     			.enter()
     			.append("line");
 
@@ -904,7 +893,7 @@ function clevelandDotPlot(data){
 
     // Make the minor dots
     clevChart.minorDots = clevChart.svg.selectAll("circle.y1990")
-						.data(data)
+						.data(clevChart.data)
 						.enter()
 						.append("circle");
 
@@ -924,7 +913,7 @@ function clevelandDotPlot(data){
     // Make the dots for 2015
 
 		clevChart.maxDots = clevChart.svg.selectAll("circle.y2015")
-				.data(data)
+				.data(clevChart.data)
 				.enter()
 				.append("circle");
 
@@ -963,7 +952,6 @@ function clevelandDotPlot(data){
 
   }
 
-  clevChart.update(data)
   return clevChart
 }
 

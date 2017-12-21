@@ -207,7 +207,6 @@ function createMap(type){
       // SELECT COUNTRY
       d = {}
       d[selectedCode] = "rgba(55,174,174,1)"
-      console.log("UPDATING " + selectedCountry)
       setTimeout(function(){mapObj.map.updateChoropleth(d)},50)
     }else{
       mapObj.fillCloropleth(getSelectedProduct())
@@ -240,6 +239,7 @@ function createMap(type){
       origin = geography.properties.iso
       destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
       mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))
+      console.log("generating datadot with selectedCountry: "+selectedCountry)
       clevChart.update(generateDataDot(selectedCountry, "Portugal",year))
       if(currentView == 'Product'){
         currentView = 'Country';
@@ -276,7 +276,6 @@ function createMap(type){
                       strokeColor: convertColorToString(productsColors[i])}
       i++;
     })
-    console.log(newArcs)
   	mapObj.map.arc(newArcs, );
   }
   /* ZOOM */
