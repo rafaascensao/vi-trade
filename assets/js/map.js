@@ -236,6 +236,9 @@ function createMap(type){
       selectedCountry = geography.properties.name
       refreshDotMatrixChart(selectedCountry,chart_options)
       getLineData(selectedCountry,min_year,max_year)
+      origin = geography.properties.iso
+      destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
+      mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))
       if(currentView == 'Product'){
         currentView = 'Country';
         // REFRESH DOT MATRIX PLOT
@@ -257,17 +260,26 @@ function createMap(type){
   	return res
   }
 
-  mapObj.removeArcs = function(map){
-  	map.svg.selectAll('path.datamaps-arc').remove()
+  mapObj.removeArcs = function(){
+  	mapObj.map.svg.selectAll('path.datamaps-arc').remove()
   }
 
-  mapObj.refreshArcs = function(map, newArcs){
-  	removeArcs(map);
-  	map.arc(newArcs, );
+  mapObj.refreshArcs = function(newArcs){
+  	mapObj.removeArcs();
+    stroke_width = 6;
+    i = 0
+
+    newArcs.forEach(function(el){
+      el.options = { strokeWidth: stroke_width -= 0.5 ,
+                      strokeColor: convertColorToString(productsColors[i])}
+      i++;
+    })
+    console.log(newArcs)
+  	mapObj.map.arc(newArcs, );
   }
   /* ZOOM */
   mapObj.zoomToArea = function(area,scale){
-    zoom.scale(scale).translate(area).event(countries_map.svg.selectAll("g"))
+    zoom.scale(scale).translate(area).event(mapObj.map.svg.selectAll("g"))
   }
 
   // RESET COLORS COUNTRIES

@@ -353,7 +353,9 @@ function qwestartBarchart(){
 
 }
 
-
+function convertColorToString(color){
+  return "rgb("+color[0]+","+color[1]+","+color[2]+")"
+}
 /* DOT MATRIX CHART */
 function DotMatrixChart(data,options){
   var h = $('.dot_matrix_chart').height()
