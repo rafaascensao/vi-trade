@@ -790,10 +790,10 @@ function generateDataDot(country1, country2, year) {
   var dataline={}
   products.forEach(function(p){
     if (parseFloat(globalProducts[p][country1][year])<=parseFloat(globalProducts[p][country2][year])) {
-        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[p][country1][year]), "max" : parseFloat(globalProducts[p][country2][year]), "min_country" : country1, "max_country" : country2})
+        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[p][country1][year])/1000, "max" : parseFloat(globalProducts[p][country2][year])/1000, "min_country" : country1, "max_country" : country2})
     }
     else {
-        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[p][country2][year]), "max" : parseFloat(globalProducts[p][country1][year]), "min_country" : country2, "max_country" : country1})
+        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[p][country2][year])/1000, "max" : parseFloat(globalProducts[p][country1][year])/1000, "min_country" : country2, "max_country" : country1})
     }
   })
   //dataDot[i] = {"name" : products[i] , productvaluecountry1 : 70 , "max" : productvaluecountry2 , "min_country" : country1 , "max_country" : country2 }
@@ -825,6 +825,7 @@ function clevelandDotPlot(){
     clevChart.xScale = d3.scale.linear()
                                .range([0, clevChart.width])
                                .domain([0, clevChart.Xmax])
+
     clevChart.yScale = d3.scale.ordinal()
                                .rangeRoundBands([ clevChart.margin.top, clevChart.height] , 0.2)
                                .domain(products)
@@ -832,6 +833,8 @@ function clevelandDotPlot(){
     clevChart.xAxis = d3.svg.axis()
                             .scale(clevChart.xScale)
                             .orient("bottom")
+                            .tickValues(d3.range(0,clevChart.Xmax, (clevChart.Xmax/10)))
+                            .tickFormat(d3.format(".2s"))
     clevChart.yAxis = d3.svg.axis()
                             .scale(clevChart.yScale)
                             .orient("left")
