@@ -763,15 +763,15 @@ function generateDotPlot(country1, country2, year){
   return dataDot
 }
 
-dataDot = [ {"name" : products[0] , "min" : 70 , "max" : 89},
-            {"name" : products[1] , "min" : 10 , "max" : 30},
-            {"name" : products[2] , "min" : 30 , "max" : 35},
-            {"name" : products[3] , "min" : 60 , "max" : 90},
-            {"name" : products[4] , "min" : 40 , "max" : 60},
-            {"name" : products[5] , "min" : 10 , "max" : 18},
-            {"name" : products[6] , "min" : 55 , "max" : 80},
-            {"name" : products[7] , "min" : 5 , "max" : 30},
-            {"name" : products[8] , "min" : 10 , "max" : 22}
+dataDot = [ {"name" : products[0] , "min" : 70 , "max" : 89 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[1] , "min" : 10 , "max" : 30 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[2] , "min" : 30 , "max" : 35 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[3] , "min" : 60 , "max" : 90 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[4] , "min" : 40 , "max" : 60 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[5] , "min" : 10 , "max" : 18 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[6] , "min" : 55 , "max" : 80 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[7] , "min" : 5 , "max" : 30 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[8] , "min" : 10 , "max" : 22 , "min_country" : "Portugal" , "max_country" : "Spain" }
           ]
 
 function clevelandDotPlot(data){
