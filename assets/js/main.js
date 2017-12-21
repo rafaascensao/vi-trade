@@ -448,7 +448,6 @@ function startDataDotMatrix(country,options) {
       valuesDot.push({ 'category' : product ,
                        'count' : Math.round(results[year] / dot)})
       })
-      console.log("valuesDot: " + valuesDot)
       valuesDot = valuesDot.sort(function(a,b){return b.count-a.count})
       //console.log(valuesDot)
       DotMatrixChart(valuesDot, options)
@@ -779,7 +778,7 @@ function generateDataDot(country1, country2, year) {
         valueCountry2 = globalProducts[flow][p][countryName]
     }
     if (parseFloat(valueCountry1[year])<=parseFloat(valueCountry2[year])) {
-        dataDot.push({"name" : p, "min" : parseFloat(valueCountry1[year])/1000, "max" : parseFloat(valueCountry2[year])/1000, "min_country" : countryName1, "max_country" : valueCountry2})
+        dataDot.push({"name" : p, "min" : parseFloat(valueCountry1[year])/1000, "max" : parseFloat(valueCountry2[year])/1000, "min_country" : countryName1, "max_country" : countryName2})
     }
     else {
         dataDot.push({"name" : p, "min" : parseFloat(valueCountry2[year])/1000, "max" : parseFloat(valueCountry1[year])/1000, "min_country" : countryName2, "max_country" : countryName1})
