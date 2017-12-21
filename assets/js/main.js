@@ -764,13 +764,25 @@ function makeLineChart(dataset, xName, yObjs, axisLables){
 // http://bl.ocks.org/asielen/44ffca2877d0132572cb
 function generateDataDot(country1, country2, year) {
   var dataDot = []
-  var dataline={}
+  var dataline = {}
+  var countryName1 = country1;
+  var countryName2 = country2;
   products.forEach(function(p){
-    if (parseFloat(globalProducts[flow][p][country1][year])<=parseFloat(globalProducts[flow][p][country2][year])) {
-        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[flow][p][country1][year])/1000, "max" : parseFloat(globalProducts[flow][p][country2][year])/1000, "min_country" : country1, "max_country" : country2})
+    valueCountry1 = globalProducts[flow][p][country1]
+    valueCountry2 = globalProducts[flow][p][country2]
+    if(typeof valueCountry1 === 'undefined'){
+        countryName1 = getKeyByValue(countriesCodes, selectedCode)
+        valueCountry1 = globalProducts[flow][p][countryName]
+    }
+    if(typeof valueCountry2 === 'undefined'){
+        countryName2 = getKeyByValue(countriesCodes, selectedCode)
+        valueCountry2 = globalProducts[flow][p][countryName]
+    }
+    if (parseFloat(valueCountry1[year])<=parseFloat(valueCountry2[year])) {
+        dataDot.push({"name" : p, "min" : parseFloat(valueCountry1[year])/1000, "max" : parseFloat(valueCountry2[year])/1000, "min_country" : countryName1, "max_country" : valueCountry2})
     }
     else {
-        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[flow][p][country2][year])/1000, "max" : parseFloat(globalProducts[flow][p][country1][year])/1000, "min_country" : country2, "max_country" : country1})
+        dataDot.push({"name" : p, "min" : parseFloat(valueCountry2[year])/1000, "max" : parseFloat(valueCountry1[year])/1000, "min_country" : countryName2, "max_country" : countryName1})
     }
   })
   //dataDot[i] = {"name" : products[i] , productvaluecountry1 : 70 , "max" : productvaluecountry2 , "min_country" : country1 , "max_country" : country2 }
