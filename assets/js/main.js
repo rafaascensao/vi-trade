@@ -6,6 +6,7 @@ var year = 2004;
 var selectedCountry = "China"
 var selectedCode = "CHN";
 var countries;
+var flow = "Export"
 var currentView = 'Product';
 var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"];
 //var productfile = {"Textiles and Clothing", "Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"}
@@ -38,8 +39,8 @@ function startViews(){
   startBarchart()
   $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
   startDataDotMatrix(selectedCountry,chart_options)
-  clevChart = clevelandDotPlot(generateDataDot("Portugal","Spain",2000))
-  clevChart.render()
+  clevChart = clevelandDotPlot()
+
 }
 
 function checkReady(){
@@ -64,14 +65,16 @@ function open(){
 
 //set countriesCodes[country]
 function generateCodesDic(){
-  var codes;
   d3.csv("../../dataGather/countryCodes.csv", function(data){
-    codes = data;
-    countries.forEach(function(country){
+    var i;
+    codes = data
+    for(i=0; i < codes.length; i++){
+      countriesCodes[codes[i]["Name"]] = codes[i]["Code"]
+    }
+    /*countries.forEach(function(country){
       code = codes.filter(function(el){ return el["Name"] == country})
       countriesCodes[country] = code[0]["Code"];
-    })
-
+    })*/
   })
 }
 
@@ -792,10 +795,10 @@ function generateDataDot(country1, country2, year) {
   var dataline={}
   products.forEach(function(p){
     if (parseFloat(globalProducts[p][country1][year])<=parseFloat(globalProducts[p][country2][year])) {
-        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[p][country1][year]), "max" : parseFloat(globalProducts[p][country2][year]), "min_country" : country1, "max_country" : country2})
+        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[p][country1][year])/1000, "max" : parseFloat(globalProducts[p][country2][year])/1000, "min_country" : country1, "max_country" : country2})
     }
     else {
-        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[p][country2][year]), "max" : parseFloat(globalProducts[p][country1][year]), "min_country" : country2, "max_country" : country1})
+        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[p][country2][year])/1000, "max" : parseFloat(globalProducts[p][country1][year])/1000, "min_country" : country2, "max_country" : country1})
     }
   })
   //dataDot[i] = {"name" : products[i] , productvaluecountry1 : 70 , "max" : productvaluecountry2 , "min_country" : country1 , "max_country" : country2 }
@@ -803,18 +806,8 @@ function generateDataDot(country1, country2, year) {
 }
 
 
-dataDot = [ {"name" : products[0] , "min" : 70 , "max" : 89 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[1] , "min" : 10 , "max" : 30 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[2] , "min" : 30 , "max" : 35 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[3] , "min" : 60 , "max" : 90 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[4] , "min" : 40 , "max" : 60 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[5] , "min" : 10 , "max" : 18 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[6] , "min" : 55 , "max" : 80 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[7] , "min" : 5 , "max" : 30 , "min_country" : "Portugal" , "max_country" : "Spain" },
-            {"name" : products[8] , "min" : 10 , "max" : 22 , "min_country" : "Portugal" , "max_country" : "Spain" }
-          ]
 
-function clevelandDotPlot(data){
+function clevelandDotPlot(){
   clevChart = {}
 
   clevChart.appendChart = function(){
@@ -829,14 +822,19 @@ function clevelandDotPlot(data){
     clevChart.yAxisLable = "Products"
 
     clevChart.data = data
-    clevChart.margin = {top: 10, right: 30, bottom: 30, left: 50};
+    clevChart.margin = {top: 10, right: 10, bottom: 30, left: 70};
     clevChart.width = $('.cleveland_dot_plot').width() - clevChart.margin.left - clevChart.margin.right;
     clevChart.height = $('.cleveland_dot_plot').height() - clevChart.margin.top - clevChart.margin.bottom;
     clevChart.Xmax =  Math.max.apply(Math, clevChart.data.map(x => x["max"]))
+    clevChart.country1Color = "orange"
+    clevChart.country2Color = "#6699FF"
+    clevChart.country1 = clevChart.data[0].min_country
+    clevChart.country2 = clevChart.data[0].max_country
 
     clevChart.xScale = d3.scale.linear()
                                .range([0, clevChart.width])
                                .domain([0, clevChart.Xmax])
+
     clevChart.yScale = d3.scale.ordinal()
                                .rangeRoundBands([ clevChart.margin.top, clevChart.height] , 0.2)
                                .domain(products)
@@ -844,6 +842,8 @@ function clevelandDotPlot(data){
     clevChart.xAxis = d3.svg.axis()
                             .scale(clevChart.xScale)
                             .orient("bottom")
+                            .tickValues(d3.range(0,clevChart.Xmax, (clevChart.Xmax/10)))
+                            .tickFormat(d3.format(".2s"))
     clevChart.yAxis = d3.svg.axis()
                             .scale(clevChart.yScale)
                             .orient("left")
@@ -859,7 +859,7 @@ function clevelandDotPlot(data){
 
     // Make the faint lines from y labels to highest dot
     clevChart.linesGrid = clevChart.svg.selectAll("lines.grid")
-                                      .data(data)
+                                      .data(clevChart.data)
                                       .enter()
                                       .append("line")
 
@@ -877,7 +877,7 @@ function clevelandDotPlot(data){
 
     // Make the dotted lines between the dots
     clevChart.linesBetween = clevChart.svg.selectAll("lines.between")
-    			.data(data)
+    			.data(clevChart.data)
     			.enter()
     			.append("line");
 
@@ -905,7 +905,7 @@ function clevelandDotPlot(data){
 
     // Make the minor dots
     clevChart.minorDots = clevChart.svg.selectAll("circle.y1990")
-						.data(data)
+						.data(clevChart.data)
 						.enter()
 						.append("circle");
 
@@ -917,15 +917,26 @@ function clevelandDotPlot(data){
 					.attr("cy", function(d) {
 						return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
 					})
+					.style("stroke", function(d){
+						if (d.name === "The World") {
+							return "black";
+						}
+					})
+					.style("fill", function(d){
+            if( d.min_country == clevChart.country1)
+              return clevChart.country1Color
+            else
+              return clevChart.country2Color
+          })
 					.append("title")
 					.text(function(d) {
-						return d.name + " in 1990: " + d.min ; //MENOR NUMERO
+						return d.name + " in 1990: " + d.min + "%"; //MENOR NUMERO
 					});
 
     // Make the dots for 2015
 
 		clevChart.maxDots = clevChart.svg.selectAll("circle.y2015")
-				.data(data)
+				.data(clevChart.data)
 				.enter()
 				.append("circle");
 
@@ -937,9 +948,20 @@ function clevelandDotPlot(data){
 			.attr("cy", function(d) {
 				return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
 			})
+			.style("stroke", function(d){
+				if (d.name === "The World") {
+					return "black";
+				}
+			})
+			.style("fill", function(d){
+        if( d.max_country == clevChart.country1)
+          return clevChart.country1Color
+        else
+          return clevChart.country2Color
+      })
 			.append("title")
 			.text(function(d) {
-				return d.name + " in 2015: " + d.max ; // MAIOR NUMERO
+				return d.name + " in 2015: " + d.max + "%"; // MAIOR NUMERO
 			});
 
 
@@ -952,7 +974,10 @@ function clevelandDotPlot(data){
     clevChart.svg.append("g")
       .attr("class", "y axis")
       .attr("transform", "translate(" + clevChart.margin.left + ",0)")
-      .call(clevChart.yAxis);
+      .call(clevChart.yAxis)
+    .selectAll(".tick text")
+      .call(wrap, clevChart.margin.left)
+
 
     clevChart.svg.append("text")
       .attr("class", "xlabel")
@@ -960,12 +985,82 @@ function clevelandDotPlot(data){
             (clevChart.height + clevChart.margin.bottom) + ")")
       .style("text-anchor", "middle")
       .attr("dy", "2")
-      .text("Percent");
+      .text("Millions $");
+
+    clevChart.legend = clevChart.svg.append("g")
+      .attr("class", "countries_legend")
+      .attr("transform" , "translate("+ clevChart.margin.left + ")")
+
+
+    clevChart.legend.append("circle")
+        .attr("r", clevChart.yScale.rangeBand()/4)
+        .attr("cx", (clevChart.width / 2) - 30)
+        .attr("cy", 20)
+        .style("fill", "orange")
+    clevChart.legend.append("text")
+        .text(clevChart.country1)
+        .style("text-anchor", "end")
+        .style("font-size", "12px")
+        .attr("transform", "translate("+ ( (clevChart.width / 2) - 45) +",24)")
+
+
+    clevChart.legend.append("circle")
+        .attr("r", clevChart.yScale.rangeBand()/4)
+        .attr("cx", (clevChart.width / 2) + 30)
+        .attr("cy", 20)
+        .style("fill", "#6699FF")
+    clevChart.legend.append("text")
+        .text(clevChart.country2)
+        .style("text-anchor", "start")
+        .style("font-size", "12px")
+        .attr("transform", "translate("+ ( (clevChart.width / 2) + 45) +",24)")
 
   }
-
-  clevChart.update(data)
   return clevChart
+}
+
+
+function wrap (text, width) {
+
+  text.each(function() {
+
+    var breakChars = ['/', '&', '-'],
+      text = d3.select(this),
+      textContent = text.text(),
+      spanContent;
+
+    breakChars.forEach(char => {
+      // Add a space after each break char for the function to use to determine line breaks
+      textContent = textContent.replace(char, char + ' ');
+    });
+
+    var words = textContent.split(/\s+/).reverse(),
+      word,
+      line = [],
+      lineNumber = 0,
+      lineHeight = 1.1, // ems
+      x = text.attr('x'),
+      y = text.attr('y'),
+      dy = parseFloat(text.attr('dy') || 0),
+      tspan = text.text(null).append('tspan').attr('x', x).attr('y', y).attr('dy', dy + 'em');
+
+    while (word = words.pop()) {
+      line.push(word);
+      tspan.text(line.join(' '));
+      if (tspan.node().getComputedTextLength() > width) {
+        line.pop();
+        spanContent = line.join(' ');
+        breakChars.forEach(char => {
+          // Remove spaces trailing breakChars that were added above
+          spanContent = spanContent.replace(char + ' ', char);
+        });
+        tspan.text(spanContent);
+        line = [word];
+        tspan = text.append('tspan').attr('x', x).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word);
+      }
+    }
+  });
+
 }
 
 function getKeyByValue(object, value) {
