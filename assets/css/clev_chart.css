@@ -1,0 +1,55 @@
+  .cleveland_dot_plot div.y2015 {
+    color: #6699FF;
+    display: inline;
+  }
+  .cleveland_dot_plot   div.y1990 {
+    color: orange;
+    display: inline;
+  }
+
+  .cleveland_dot_plot   svg {
+    background-color: white;
+  }
+
+  .cleveland_dot_plot   circle {
+    stroke-width: 1;
+  }
+
+  .cleveland_dot_plot   circle.y2015 {
+    fill: #6699FF;
+  }
+
+  .cleveland_dot_plot   circle.y1990 {
+    fill: orange;
+  }
+
+  .cleveland_dot_plot   circle:hover {
+    stroke-width: 3;
+    stroke: white;
+  }
+
+  .cleveland_dot_plot   line.grid {
+    stroke: #eee;
+  }
+
+  .cleveland_dot_plot   line.between {
+    stroke: black;
+  }
+
+  .cleveland_dot_plot   .axis path,
+  .cleveland_dot_plot   .axis line {
+    fill: none;
+    stroke: black;
+    shape-rendering: crispEdges;
+  }
+
+  .cleveland_dot_plot   .axis text {
+    font-family: sans-serif;
+    font-size: 11px;
+  }
+
+  .cleveland_dot_plot   .xlabel {
+    font-famile: sans-serif;
+    font-size: 11px;
+    color: gray;
+  }
