@@ -22,7 +22,9 @@ function startTimeline(){
       else
         $('.timeline .slider .slide span .year').text(ui.value);
       year = ui.value
-      fillCloropleth(getSelectedProduct())
+      if(currentView == 'Product'){
+        mapObj.fillCloropleth(getSelectedProduct())
+      }
       //
       refreshBarChart()
       refreshDotMatrixChart(selectedCountry,chart_options)
@@ -36,7 +38,8 @@ function startTimeline(){
   function toggleButtons(){
     $(this).parent().find('p').toggleClass('hidden-class')
     if($(this).parent().find('p:not(.hidden-class)').text() == "Country"){
-      toggleFlowChoroplethMap(false,true);
+      //toggleFlowChoroplethMap(false,true);
+      currentView = "Country"
 
       // ISTO SO FICA ASSIM PARA ESTA ENTREGA, DEPOIS
       // ESTE CANCRO DESAPARECE DAQUI
@@ -47,7 +50,8 @@ function startTimeline(){
 
       $('.description').addClass('country-view')
     }else if ($(this).parent().find('p:not(.hidden-class)').text() == "Product") {
-      toggleFlowChoroplethMap(true,false);
+      //toggleFlowChoroplethMap(true,false);
+      currentView = "Product"
       refreshBarChart();
 
 
@@ -60,11 +64,12 @@ function startTimeline(){
 
       $('.description').removeClass('country-view')
     }
+    mapObj.updateMap(currentView)
   }
   function selectProduct(){
     $(this).parent().children().removeClass('selected')
     $(this).addClass('selected')
-    fillCloropleth($(this).attr('product'))
+    mapObj.fillCloropleth($(this).attr('product'))
     refreshBarChart()
   }
 }

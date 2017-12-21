@@ -5,6 +5,7 @@ var min_year = 1989, max_year = 2015;
 var year = 2004;
 var selectedCountry = "China"
 var countries;
+var currentView = 'Product';
 var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"];
 //var productfile = {"Textiles and Clothing", "Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"}
 var globalProducts;
@@ -31,7 +32,7 @@ function computeValues(){
 
 function startViews(){
   startTimeline()
-  createMap()
+  mapObj = createMap()
   $('.description > div.selected').click()
   startBarchart()
   $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()

@@ -196,18 +196,20 @@ function createMap(type){
       defaultFill: 'rgb(129,129,129)'
     },
     done: function(datamap){
-      mapObj.interactMap(datamap)
+      interactMap(datamap)
     }
   });
 
   mapObj.updateMap = function(type){
     mapObj.type = type
-    mapObj.render()
+    if( type == "Country" ){
+      mapObj.resetAllColors()
+    }else{
+      mapObj.fillCloropleth(getSelectedProduct())
+    }
   }
-  mapObj.render = function(){
 
-  }
-  mapObj.interactMap = function(datamap){
+  function interactMap(datamap){
     zoom = d3.behavior.zoom().scaleExtent([1, 30]).on("zoom",redraw)
     datamap.svg.call(zoom);
     function redraw() {
