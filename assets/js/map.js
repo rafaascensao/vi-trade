@@ -239,6 +239,7 @@ function createMap(type){
       origin = geography.properties.iso
       destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
       mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))
+      clevChart.update(generateDataDot(selectedCountry, "Portugal",year))
       if(currentView == 'Product'){
         currentView = 'Country';
         // REFRESH DOT MATRIX PLOT

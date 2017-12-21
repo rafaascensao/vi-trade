@@ -37,7 +37,7 @@ function startViews(){
   startBarchart()
   $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
   startDataDotMatrix(selectedCountry,chart_options)
-  clevChart = clevelandDotPlot(dataDot)
+  clevChart = clevelandDotPlot(generateDataDot("Portugal","Spain",2000))
   clevChart.render()
 }
 
@@ -790,31 +790,6 @@ dataDot = [ {"name" : products[0] , "min" : 70 , "max" : 89 , "min_country" : "P
 
 function clevelandDotPlot(data){
   clevChart = {}
-  clevChart.xAxisLable = "$"
-  clevChart.yAxisLable = "Products"
-
-  clevChart.data = data
-  clevChart.margin = {top: 10, right: 30, bottom: 30, left: 50};
-  clevChart.width = $('.cleveland_dot_plot').width() - clevChart.margin.left - clevChart.margin.right;
-  clevChart.height = $('.cleveland_dot_plot').height() - clevChart.margin.top - clevChart.margin.bottom;
-
-  clevChart.xScale = d3.scale.linear()
-                             .range([0, clevChart.width])
-                             .domain([0, 100])
-  clevChart.yScale = d3.scale.ordinal()
-                             .rangeRoundBands([ clevChart.margin.top, clevChart.height] , 0.2)
-                             .domain(products)
-
-  clevChart.xAxis = d3.svg.axis()
-                          .scale(clevChart.xScale)
-                          .orient("bottom")
-  clevChart.yAxis = d3.svg.axis()
-                          .scale(clevChart.yScale)
-                          .orient("left")
-                          .innerTickSize([0])
-
-  clevChart.svg
-
 
   clevChart.appendChart = function(){
     clevChart.svg = d3.select(".cleveland_dot_plot")
@@ -822,6 +797,38 @@ function clevelandDotPlot(data){
                       .attr("width", clevChart.width + clevChart.margin.left + clevChart.margin.right)
                       .attr("height", clevChart.height + clevChart.margin.top + clevChart.margin.bottom)
   }
+
+  clevChart.update = function(data){
+    clevChart.xAxisLable = "$"
+    clevChart.yAxisLable = "Products"
+
+    clevChart.data = data
+    clevChart.margin = {top: 10, right: 30, bottom: 30, left: 50};
+    clevChart.width = $('.cleveland_dot_plot').width() - clevChart.margin.left - clevChart.margin.right;
+    clevChart.height = $('.cleveland_dot_plot').height() - clevChart.margin.top - clevChart.margin.bottom;
+    clevChart.Xmax =  Math.max.apply(Math, clevChart.data.map(x => x["max"]))
+
+    clevChart.xScale = d3.scale.linear()
+                               .range([0, clevChart.width])
+                               .domain([0, clevChart.Xmax])
+    clevChart.yScale = d3.scale.ordinal()
+                               .rangeRoundBands([ clevChart.margin.top, clevChart.height] , 0.2)
+                               .domain(products)
+
+    clevChart.xAxis = d3.svg.axis()
+                            .scale(clevChart.xScale)
+                            .orient("bottom")
+    clevChart.yAxis = d3.svg.axis()
+                            .scale(clevChart.yScale)
+                            .orient("left")
+                            .innerTickSize([0])
+
+    if($('.cleveland_dot_plot svg').length > 0)
+      clevChart.svg.remove()
+    clevChart.appendChart()
+    clevChart.render()
+  }
+
   clevChart.render = function(){
 
     // Make the faint lines from y labels to highest dot
@@ -884,19 +891,9 @@ function clevelandDotPlot(data){
 					.attr("cy", function(d) {
 						return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
 					})
-					.style("stroke", function(d){
-						if (d.name === "The World") {
-							return "black";
-						}
-					})
-					.style("fill", function(d){
-						if (d.name === "The World") {
-							return "darkorange";
-						}
-					})
 					.append("title")
 					.text(function(d) {
-						return d.name + " in 1990: " + d.min + "%"; //MENOR NUMERO
+						return d.name + " in 1990: " + d.min ; //MENOR NUMERO
 					});
 
     // Make the dots for 2015
@@ -914,19 +911,9 @@ function clevelandDotPlot(data){
 			.attr("cy", function(d) {
 				return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
 			})
-			.style("stroke", function(d){
-				if (d.name === "The World") {
-					return "black";
-				}
-			})
-			.style("fill", function(d){
-				if (d.name === "The World") {
-					return "#476BB2";
-				}
-			})
 			.append("title")
 			.text(function(d) {
-				return d.name + " in 2015: " + d.max + "%"; // MAIOR NUMERO
+				return d.name + " in 2015: " + d.max ; // MAIOR NUMERO
 			});
 
 
@@ -950,10 +937,7 @@ function clevelandDotPlot(data){
       .text("Percent");
 
   }
-  clevChart.update = function(){
 
-  }
-
-  clevChart.appendChart()
+  clevChart.update(data)
   return clevChart
 }
