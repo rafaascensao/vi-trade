@@ -187,7 +187,8 @@ function createMap(type){
   mapObj = {}
 
   mapObj.type = type
-  mapObj.map = newDatamap({
+
+  mapObj.map = new Datamap({
     scope: 'world',
     element: document.getElementById('map'),
     responsive: true,
@@ -201,12 +202,14 @@ function createMap(type){
 
   mapObj.updateMap = function(type){
     mapObj.type = type
-    mapObj.render()
+    if( type == "Country" ){
+      mapObj.resetAllColors()
+    }else{
+      mapObj.fillCloropleth(getSelectedProduct())
+    }
   }
-  mapObj.render = function(){
 
-  }
-  mapObj.interactFlowMap = function(datamap){
+  function interactMap(datamap){
     zoom = d3.behavior.zoom().scaleExtent([1, 30]).on("zoom",redraw)
     datamap.svg.call(zoom);
     function redraw() {
@@ -232,6 +235,98 @@ function createMap(type){
       console.log(geography)
     });
   }
+  /* ARCS */
+  mapObj.createOriginDestinationList = function(origin, destinations){
+  	res = [];
+  	destinations.forEach(function(el){
+      res.push({ origin: origin, destination: el})
+  	});
+  	return res
+  }
+
+  mapObj.removeArcs = function(map){
+  	map.svg.selectAll('path.datamaps-arc').remove()
+  }
+
+  mapObj.refreshArcs = function(map, newArcs){
+  	removeArcs(map);
+  	map.arc(newArcs, );
+  }
+  /* ZOOM */
+  mapObj.zoomToArea = function(area,scale){
+    zoom.scale(scale).translate(area).event(countries_map.svg.selectAll("g"))
+  }
+
+  // RESET COLORS COUNTRIES
+  mapObj.resetAllColors = function(){
+    d = { }
+    Datamap.prototype.worldTopo.objects.world.geometries.forEach(function(element){
+      d[element["id"]] = "rgba(129,129,130,1)";
+    })
+    mapObj.map.updateChoropleth(d)
+  }
+
+  mapObj.fillCloropleth = function(product){
+    dic = { }
+    step = computeQuintiles(product)
+    x = []
+    countries.forEach(function(count){
+      if (count != " World" && count != "European Union"){
+      x.push(parseFloat(globalProducts[product][count][year]))}
+    })
+    x = x.sort(function(a,b){ return a-b})
+    no_zeros = x.filter(function(el){ return el != 0 })
+
+    firstV = no_zeros[0]
+    secondV = no_zeros[step-1]
+    thirdV = no_zeros[(step-1)*2]
+    fourthV = no_zeros[(step-1)*3]
+    fifthV = no_zeros[no_zeros.length - 1]
+
+    $('#bar-cloropleth > div:first-child').html("<p>Undefined</p>")
+    $('#bar-cloropleth > div:nth-child(2)').html("<p>"+Math.floor(firstV/1000)+" - "+Math.floor(secondV/1000)+"</p>")
+    $('#bar-cloropleth > div:nth-child(3)').html("<p>"+Math.floor(secondV/1000)+" - "+Math.floor(thirdV/1000)+"</p>")
+    $('#bar-cloropleth > div:nth-child(4)').html("<p>"+Math.floor(thirdV/1000)+" - "+Math.floor(fourthV/1000)+"</p>")
+    $('#bar-cloropleth > div:nth-child(5)').html("<p>"+Math.floor(fourthV/1000)+" - "+Math.floor(fifthV/1000)+"</p>")
+
+    cor = productsColors[products.indexOf(product)]
+
+    countries.forEach(function(count){
+      if (count != " World" && count != "European Union"){
+      value = parseFloat(globalProducts[product][count][year])
+      if (value == 0){
+        dic[countriesCodes[count]] = "rgba(129,129,130,1)"
+      }
+      else if(value <= secondV){
+        dic[countriesCodes[count]] = "rgba(" +cor[0]+ "," +cor[1]+ "," +cor[2]+ ",0.4)"
+      }
+
+      else if(value >= secondV && value < thirdV){
+        dic[countriesCodes[count]] = "rgba(" +cor[0]+ "," +cor[1]+ "," +cor[2]+ ",0.6)"
+      }
+
+      else if(value >= thirdV && value < fourthV){
+        dic[countriesCodes[count]] = "rgba(" +cor[0]+ "," +cor[1]+ "," +cor[2]+ ",0.8)"
+      }
+
+      else if(value >= fourthV){
+        dic[countriesCodes[count]] = "rgba(" +cor[0]+ "," +cor[1]+ "," +cor[2]+ ",1)"
+      }
+    }
+    })
+
+    opacity = 0.2
+    $('#bar-cloropleth > div').each(function(){
+      $(this).css('background',"rgba(" +cor[0]+ "," +cor[1]+ "," +cor[2]+ ","+opacity+")")
+      opacity += 0.2
+    })
+    $('#bar-cloropleth > div:first-child').css('background','#818182');
+
+    mapObj.resetAllColors();
+    mapObj.map.updateChoropleth(dic)
+  }
+
+
 
   return mapObj;
 }
