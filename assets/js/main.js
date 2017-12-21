@@ -176,8 +176,8 @@ function barchart() {
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     var data = globalProducts[getSelectedProduct()][year]
+    console.log(data)
     data.sort(function(a, b) { return a.value - b.value; });
-
     x.domain([0, d3.max(data, function(d) { return d.value; })]);
     y.domain(data.map(function(d) { return d.area; })).padding(0.1);
 
@@ -447,6 +447,7 @@ function startDataDotMatrix(country,options) {
         valuesDot.push({ 'category' : product ,
                          'count' : Math.round(results[0][year] / dot)})
       })
+      console.log("valuesDot: " + valuesDot)
       valuesDot = valuesDot.sort(function(a,b){return b.count-a.count})
       //console.log(valuesDot)
       DotMatrixChart(valuesDot, options)
@@ -969,4 +970,34 @@ function clevelandDotPlot(data){
 
 function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
+}
+
+
+function getCountryTradeEx(country, year, product, top) {
+    d3.csv("../../dataGather/relationaltrade.csv", function(data){
+        console.log("Computing relationaltrade " + product)
+     	  var count = []
+        countries.forEach(function(c){
+          countryyeardata=data.filter(function(element){
+            return element["Reporter Name"] == country && element["Partner Name"] == c && element["Product Group"] == product;
+          })
+          console.log("Partner:" + c)
+          if (c != " World" && c != "European Union"){
+            if(typeof countryyeardata[0] === 'undefined') {
+              //count[c] = 0
+              count.push({'Partner' : c, 'Trade_value': 0})
+              //console.log("Partner: "+ c + "; Product Group: " + product + "; Year: " + year + "; Export Value: "+ 0)
+            }
+            else{
+              //count[c] = countryyeardata[0][year]
+              count.push({'Partner' : c, 'Trade_value': countryyeardata[0][year]})
+              //console.log("Partner: "+ c + "; Product Group: " + product + "; Year: " + year + "; Export Value: "+countryyeardata[0][year])
+            }
+          }
+
+        })
+        count.sort(function(a,b){return parseFloat(b.Trade_value)- parseFloat(a.Trade_value)});
+        console.log(count.slice(0,top))
+        return count.slice(0,top)
+    })
 }
