@@ -761,7 +761,7 @@ function generateDataDot(country1, country2, year) {
   var min_country = {}
   var max = {}
   var max_country = {}
-  for (var p in products) {
+  products.forEach(function(p){
     if (globalProducts[p][country1][year]<=globalProducts[p][country2][year]) {
       min[p]=globalProducts[p][country1][year];
       min_country[p]= country1;
@@ -774,16 +774,16 @@ function generateDataDot(country1, country2, year) {
       max[p]=globalProducts[p][country1][year];
       max_country[p]= country1;
     }
-  }
-  dataDot = [ {"name" : products[0] , "min" : min[product[0]] , "max" : max[product[0]] , "min_country" : min_country[product[0]] , "max_country" : max_country[product[0]] },
-              {"name" : products[1] , "min" : min[product[1]] , "max" : max[product[1]] , "min_country" : min_country[product[1]] , "max_country" : max_country[product[1]] },
-              {"name" : products[2] , "min" : min[product[2]] , "max" : max[product[2]] , "min_country" : min_country[product[2]] , "max_country" : max_country[product[2]] },
-              {"name" : products[3] , "min" : min[product[3]] , "max" : max[product[3]] , "min_country" : min_country[product[3]] , "max_country" : max_country[product[3]] },
-              {"name" : products[4] , "min" : min[product[4]] , "max" : max[product[4]] , "min_country" : min_country[product[4]] , "max_country" : max_country[product[4]] },
-              {"name" : products[5] , "min" : min[product[5]] , "max" : max[product[5]] , "min_country" : min_country[product[5]] , "max_country" : max_country[product[5]] },
-              {"name" : products[6] , "min" : min[product[6]] , "max" : max[product[6]] , "min_country" : min_country[product[6]] , "max_country" : max_country[product[6]] },
-              {"name" : products[7] , "min" : min[product[7]] , "max" : max[product[7]] , "min_country" : min_country[product[7]] , "max_country" : max_country[product[7]] },
-              {"name" : products[8] , "min" : min[product[8]] , "max" : max[product[8]] , "min_country" : min_country[product[8]] , "max_country" : max_country[product[8]] }
+  })
+  dataDot = [ {"name" : products[0] , "min" : min[products[0]] , "max" : max[products[0]] , "min_country" : min_country[products[0]] , "max_country" : max_country[products[0]] },
+              {"name" : products[1] , "min" : min[products[1]] , "max" : max[products[1]] , "min_country" : min_country[products[1]] , "max_country" : max_country[products[1]] },
+              {"name" : products[2] , "min" : min[products[2]] , "max" : max[products[2]] , "min_country" : min_country[products[2]] , "max_country" : max_country[products[2]] },
+              {"name" : products[3] , "min" : min[products[3]] , "max" : max[products[3]] , "min_country" : min_country[products[3]] , "max_country" : max_country[products[3]] },
+              {"name" : products[4] , "min" : min[products[4]] , "max" : max[products[4]] , "min_country" : min_country[products[4]] , "max_country" : max_country[products[4]] },
+              {"name" : products[5] , "min" : min[products[5]] , "max" : max[products[5]] , "min_country" : min_country[products[5]] , "max_country" : max_country[products[5]] },
+              {"name" : products[6] , "min" : min[products[6]] , "max" : max[products[6]] , "min_country" : min_country[products[6]] , "max_country" : max_country[products[6]] },
+              {"name" : products[7] , "min" : min[products[7]] , "max" : max[products[7]] , "min_country" : min_country[products[7]] , "max_country" : max_country[products[7]] },
+              {"name" : products[8] , "min" : min[products[8]] , "max" : max[products[8]] , "min_country" : min_country[products[8]] , "max_country" : max_country[products[8]] }
             ]
   // PARA CADA PRODUTO GERAR UM DICIONARIO COM MIN E MAX ENTRE PAISES PARA O CURRENT_YEAR
   return dataDot
