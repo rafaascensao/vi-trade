@@ -46,6 +46,12 @@ function startTimeline(){
       currentView = "Product"
       toggleViews()
       refreshBarChart();
+    }else if  ($(this).parent().find('p:not(.hidden-class)').text() == "Export"){
+      flow = "Export"
+      console.log(flow)
+    }else if  ($(this).parent().find('p:not(.hidden-class)').text() == "Import"){
+      flow = "Import"
+      console.log(flow)
     }
     mapObj.updateMap(currentView)
   }
