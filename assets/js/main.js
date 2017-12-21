@@ -756,9 +756,35 @@ function makeLineChart(dataset, xName, yObjs, axisLables){
   return chartObj;
 }
 // http://bl.ocks.org/asielen/44ffca2877d0132572cb
-
-function generateDotPlot(country1, country2, year){
-  dataDot = []
+function generateDataDot(country1, country2, year) {
+  var min = {}
+  var min_country = {}
+  var max = {}
+  var max_country = {}
+  for (var p in products) {
+    if (globalProducts[p][country1][year]<=globalProducts[p][country2][year]) {
+      min[p]=globalProducts[p][country1][year];
+      min_country[p]= country1;
+      max[p]=globalProducts[p][country2][year];
+      max_country[p]= country2;
+    }
+    else {
+      min[p]=globalProducts[p][country2][year];
+      min_country[p]= country2;
+      max[p]=globalProducts[p][country1][year];
+      max_country[p]= country1;
+    }
+  }
+  dataDot = [ {"name" : products[0] , "min" : min[product[0]] , "max" : max[product[0]] , "min_country" : min_country[product[0]] , "max_country" : max_country[product[0]] },
+              {"name" : products[1] , "min" : min[product[1]] , "max" : max[product[1]] , "min_country" : min_country[product[1]] , "max_country" : max_country[product[1]] },
+              {"name" : products[2] , "min" : min[product[2]] , "max" : max[product[2]] , "min_country" : min_country[product[2]] , "max_country" : max_country[product[2]] },
+              {"name" : products[3] , "min" : min[product[3]] , "max" : max[product[3]] , "min_country" : min_country[product[3]] , "max_country" : max_country[product[3]] },
+              {"name" : products[4] , "min" : min[product[4]] , "max" : max[product[4]] , "min_country" : min_country[product[4]] , "max_country" : max_country[product[4]] },
+              {"name" : products[5] , "min" : min[product[5]] , "max" : max[product[5]] , "min_country" : min_country[product[5]] , "max_country" : max_country[product[5]] },
+              {"name" : products[6] , "min" : min[product[6]] , "max" : max[product[6]] , "min_country" : min_country[product[6]] , "max_country" : max_country[product[6]] },
+              {"name" : products[7] , "min" : min[product[7]] , "max" : max[product[7]] , "min_country" : min_country[product[7]] , "max_country" : max_country[product[7]] },
+              {"name" : products[8] , "min" : min[product[8]] , "max" : max[product[8]] , "min_country" : min_country[product[8]] , "max_country" : max_country[product[8]] }
+            ]
   // PARA CADA PRODUTO GERAR UM DICIONARIO COM MIN E MAX ENTRE PAISES PARA O CURRENT_YEAR
   return dataDot
 }
