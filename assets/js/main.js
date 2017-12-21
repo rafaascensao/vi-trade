@@ -36,7 +36,8 @@ function startViews(){
   startBarchart()
   $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
   startDataDotMatrix(selectedCountry,chart_options)
-
+  clevChart = clevelandDotPlot(dataDot)
+  clevChart.render()
 }
 
 function checkReady(){
@@ -501,7 +502,6 @@ function getLineData(country, initialYear, finalYear){
 var chartObj = {};
 
 function makeLineChart(dataset, xName, yObjs, axisLables){
-  console.log(2131232)
   if( $('.line_chart .inner-wrapper').length > 0){
     chartObj.updateChart(dataset,xName,yObjs,axisLables)
     return chartObj;
@@ -698,7 +698,7 @@ function makeLineChart(dataset, xName, yObjs, axisLables){
     chartObj.yAxisLable = axisLables.yAxis;
 
     chartObj.data = dataset;
-    chartObj.margin = {top: 10, right: 30, bottom: 30, left: 50};
+    chartObj.margin = {top: 10, right: 5, bottom: 30, left: 80};
     chartObj.width = 650 - chartObj.margin.left - chartObj.margin.right;
     chartObj.height = 300 - chartObj.margin.top - chartObj.margin.bottom;
 
@@ -758,3 +758,199 @@ function makeLineChart(dataset, xName, yObjs, axisLables){
   return chartObj;
 }
 // http://bl.ocks.org/asielen/44ffca2877d0132572cb
+function generateDataDot(country1, country2, year) {
+  var dataDot = []
+  var dataline={}
+  products.forEach(function(p){
+    if (parseFloat(globalProducts[p][country1][year])<=parseFloat(globalProducts[p][country2][year])) {
+        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[p][country1][year]), "max" : parseFloat(globalProducts[p][country2][year]), "min_country" : country1, "max_country" : country2})
+    }
+    else {
+        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[p][country2][year]), "max" : parseFloat(globalProducts[p][country1][year]), "min_country" : country2, "max_country" : country1})
+    }
+  })
+  //dataDot[i] = {"name" : products[i] , productvaluecountry1 : 70 , "max" : productvaluecountry2 , "min_country" : country1 , "max_country" : country2 }
+  return dataDot
+}
+
+
+dataDot = [ {"name" : products[0] , "min" : 70 , "max" : 89 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[1] , "min" : 10 , "max" : 30 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[2] , "min" : 30 , "max" : 35 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[3] , "min" : 60 , "max" : 90 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[4] , "min" : 40 , "max" : 60 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[5] , "min" : 10 , "max" : 18 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[6] , "min" : 55 , "max" : 80 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[7] , "min" : 5 , "max" : 30 , "min_country" : "Portugal" , "max_country" : "Spain" },
+            {"name" : products[8] , "min" : 10 , "max" : 22 , "min_country" : "Portugal" , "max_country" : "Spain" }
+          ]
+
+function clevelandDotPlot(data){
+  clevChart = {}
+  clevChart.xAxisLable = "$"
+  clevChart.yAxisLable = "Products"
+
+  clevChart.data = data
+  clevChart.margin = {top: 10, right: 30, bottom: 30, left: 50};
+  clevChart.width = $('.cleveland_dot_plot').width() - clevChart.margin.left - clevChart.margin.right;
+  clevChart.height = $('.cleveland_dot_plot').height() - clevChart.margin.top - clevChart.margin.bottom;
+
+  clevChart.xScale = d3.scale.linear()
+                             .range([0, clevChart.width])
+                             .domain([0, 100])
+  clevChart.yScale = d3.scale.ordinal()
+                             .rangeRoundBands([ clevChart.margin.top, clevChart.height] , 0.2)
+                             .domain(products)
+
+  clevChart.xAxis = d3.svg.axis()
+                          .scale(clevChart.xScale)
+                          .orient("bottom")
+  clevChart.yAxis = d3.svg.axis()
+                          .scale(clevChart.yScale)
+                          .orient("left")
+                          .innerTickSize([0])
+
+  clevChart.svg
+
+
+  clevChart.appendChart = function(){
+    clevChart.svg = d3.select(".cleveland_dot_plot")
+                      .append("svg")
+                      .attr("width", clevChart.width + clevChart.margin.left + clevChart.margin.right)
+                      .attr("height", clevChart.height + clevChart.margin.top + clevChart.margin.bottom)
+  }
+  clevChart.render = function(){
+
+    // Make the faint lines from y labels to highest dot
+    clevChart.linesGrid = clevChart.svg.selectAll("lines.grid")
+                                      .data(data)
+                                      .enter()
+                                      .append("line")
+
+    clevChart.linesGrid.attr("class", "grid")
+                       .attr("x1", clevChart.margin.left)
+                       .attr("y1", function(d){
+                         return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2; //  d.name = PRODUTO
+                       })
+                       .attr("x2", function(d){
+                         return clevChart.margin.left + clevChart.xScale(+d.max) // MAIOR NUMERO FIXME
+                       })
+                       .attr("y2", function(d){
+                         return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2 // d.name = PRODUTO
+                       })
+
+    // Make the dotted lines between the dots
+    clevChart.linesBetween = clevChart.svg.selectAll("lines.between")
+    			.data(data)
+    			.enter()
+    			.append("line");
+
+    clevChart.linesBetween.attr("class", "between")
+  				.attr("x1", function(d) {
+  					return clevChart.margin.left + clevChart.xScale(+d.min); // MENOR NUMERO
+  				})
+  				.attr("y1", function(d) {
+  					return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
+  				})
+  				.attr("x2", function(d) {
+  					return clevChart.margin.left +clevChart.xScale(d.max); // MAIOR NUMERO
+  				})
+  				.attr("y2", function(d) {
+  					return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
+  				})
+  				.attr("stroke-dasharray", "5,5")
+  				.attr("stroke-width", function(d, i) {
+  					if (i == 7) {
+  						return "1";
+  					} else {
+  						return "0.5";
+  					}
+  				});
+
+    // Make the minor dots
+    clevChart.minorDots = clevChart.svg.selectAll("circle.y1990")
+						.data(data)
+						.enter()
+						.append("circle");
+
+    clevChart.minorDots.attr("class", "y1990")
+					.attr("cx", function(d) {
+						return clevChart.margin.left + clevChart.xScale(+d.min); // MENOR ANO
+					})
+					.attr("r", clevChart.yScale.rangeBand()/4)
+					.attr("cy", function(d) {
+						return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
+					})
+					.style("stroke", function(d){
+						if (d.name === "The World") {
+							return "black";
+						}
+					})
+					.style("fill", function(d){
+						if (d.name === "The World") {
+							return "darkorange";
+						}
+					})
+					.append("title")
+					.text(function(d) {
+						return d.name + " in 1990: " + d.min + "%"; //MENOR NUMERO
+					});
+
+    // Make the dots for 2015
+
+		clevChart.maxDots = clevChart.svg.selectAll("circle.y2015")
+				.data(data)
+				.enter()
+				.append("circle");
+
+		clevChart.maxDots.attr("class", "y2015")
+			.attr("cx", function(d) {
+				return clevChart.margin.left + clevChart.xScale(+d.max); // MAX NUMERO
+			})
+			.attr("r", clevChart.yScale.rangeBand()/4)
+			.attr("cy", function(d) {
+				return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
+			})
+			.style("stroke", function(d){
+				if (d.name === "The World") {
+					return "black";
+				}
+			})
+			.style("fill", function(d){
+				if (d.name === "The World") {
+					return "#476BB2";
+				}
+			})
+			.append("title")
+			.text(function(d) {
+				return d.name + " in 2015: " + d.max + "%"; // MAIOR NUMERO
+			});
+
+
+    // add the axes
+    clevChart.svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(" + clevChart.margin.left + "," + clevChart.height + ")")
+    .call(clevChart.xAxis);
+
+    clevChart.svg.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(" + clevChart.margin.left + ",0)")
+      .call(clevChart.yAxis);
+
+    clevChart.svg.append("text")
+      .attr("class", "xlabel")
+      .attr("transform", "translate(" + (clevChart.margin.left + clevChart.width / 2) + " ," +
+            (clevChart.height + clevChart.margin.bottom) + ")")
+      .style("text-anchor", "middle")
+      .attr("dy", "2")
+      .text("Percent");
+
+  }
+  clevChart.update = function(){
+
+  }
+
+  clevChart.appendChart()
+  return clevChart
+}

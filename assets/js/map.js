@@ -179,3 +179,59 @@ function resetAllColors(){
   })
   countries_map.updateChoropleth(d)
 }
+
+
+
+
+function createMap(type){
+  mapObj = {}
+
+  mapObj.type = type
+  mapObj.map = newDatamap({
+    scope: 'world',
+    element: document.getElementById('map'),
+    responsive: true,
+    fills: {
+      defaultFill: 'rgb(129,129,129)'
+    },
+    done: function(datamap){
+      interactMap(datamap)
+    }
+  });
+
+  mapObj.updateMap = function(type){
+    mapObj.type = type
+    mapObj.render()
+  }
+  mapObj.render = function(){
+
+  }
+  mapObj.interactFlowMap = function(datamap){
+    zoom = d3.behavior.zoom().scaleExtent([1, 30]).on("zoom",redraw)
+    datamap.svg.call(zoom);
+    function redraw() {
+      console.log(d3.event.translate)
+      if(d3.event.translate[0] > 0)
+       	d3.event.translate[0] = -1
+      if(d3.event.translate[1] > 0)
+       	d3.event.translate[1] = -1
+      /*console.log("COMPARING WITH "+ d3.event.translate[0] + " " + d3.event.scale)
+      if(d3.event.translate[0] < d3.event.scale)
+       d3.event.translate[0] = -1 * d3.event.scale
+      if(d3.event.translate[1] < d3.event.scale)
+       d3.event.translate[1] = -1 * d3.event.scale*/
+      zoom.translate(d3.event.translate)
+      if(d3.event)
+      	datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+    }
+    datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
+      selectedCountry = geography.properties.name
+      refreshDotMatrixChart(selectedCountry,chart_options)
+      getLineData(selectedCountry,min_year,max_year)
+      console.log(geography.properties.name);
+      console.log(geography)
+    });
+  }
+
+  return mapObj;
+}
