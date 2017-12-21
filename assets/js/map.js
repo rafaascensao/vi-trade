@@ -202,8 +202,13 @@ function createMap(type){
 
   mapObj.updateMap = function(type){
     mapObj.type = type
+    mapObj.resetAllColors()
     if( type == "Country" ){
-      mapObj.resetAllColors()
+      // SELECT COUNTRY
+      d = {}
+      d[countriesCodes[selectedCountry]] = "rgba(55,174,174,1)"
+      console.log("UPDATING " + selectedCountry)
+      setTimeout(function(){mapObj.map.updateChoropleth(d)},50)
     }else{
       mapObj.fillCloropleth(getSelectedProduct())
     }
@@ -233,14 +238,14 @@ function createMap(type){
       getLineData(selectedCountry,min_year,max_year)
       if(currentView == 'Product'){
         currentView = 'Country';
-        // UPDATE MAP
-        mapObj.updateMap(currentView);
         // REFRESH DOT MATRIX PLOT
-        refreshDotMatrixChart(selectedCountry,chart_options)
         toggleViews()
       }
-      console.log(geography.properties.name);
-      console.log(geography)
+      mapObj.updateMap(currentView)
+
+
+    //  console.log(geography.properties.name);
+    //  console.log(geography)
     });
   }
   /* ARCS */
