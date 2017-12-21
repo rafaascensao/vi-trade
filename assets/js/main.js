@@ -951,7 +951,7 @@ function clevelandDotPlot(){
             (clevChart.height + clevChart.margin.bottom) + ")")
       .style("text-anchor", "middle")
       .attr("dy", "2")
-      .text("Percent");
+      .text("Millions $");
 
   }
 
