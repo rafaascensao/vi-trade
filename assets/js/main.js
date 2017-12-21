@@ -31,7 +31,7 @@ function computeValues(){
 
 function startViews(){
   startTimeline()
-  startMap()
+  createMap()
   $('.description > div.selected').click()
   startBarchart()
   $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()

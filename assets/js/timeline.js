@@ -23,6 +23,7 @@ function startTimeline(){
         $('.timeline .slider .slide span .year').text(ui.value);
       year = ui.value
       fillCloropleth(getSelectedProduct())
+      //
       refreshBarChart()
       refreshDotMatrixChart(selectedCountry,chart_options)
     }
