@@ -796,6 +796,10 @@ function clevelandDotPlot(){
     clevChart.width = $('.cleveland_dot_plot').width() - clevChart.margin.left - clevChart.margin.right;
     clevChart.height = $('.cleveland_dot_plot').height() - clevChart.margin.top - clevChart.margin.bottom;
     clevChart.Xmax =  Math.max.apply(Math, clevChart.data.map(x => x["max"]))
+    clevChart.country1Color = "orange"
+    clevChart.country2Color = "#6699FF"
+    clevChart.country1 = clevChart.data[0].min_country
+    clevChart.country2 = clevChart.data[0].max_country
 
     clevChart.xScale = d3.scale.linear()
                                .range([0, clevChart.width])
@@ -889,10 +893,11 @@ function clevelandDotPlot(){
 						}
 					})
 					.style("fill", function(d){
-						if (d.name === "The World") {
-							return "darkorange";
-						}
-					})
+            if( d.min_country == clevChart.country1)
+              return clevChart.country1Color
+            else
+              return clevChart.country2Color
+          })
 					.append("title")
 					.text(function(d) {
 						return d.name + " in 1990: " + d.min + "%"; //MENOR NUMERO
@@ -919,10 +924,11 @@ function clevelandDotPlot(){
 				}
 			})
 			.style("fill", function(d){
-				if (d.name === "The World") {
-					return "#476BB2";
-				}
-			})
+        if( d.max_country == clevChart.country1)
+          return clevChart.country1Color
+        else
+          return clevChart.country2Color
+      })
 			.append("title")
 			.text(function(d) {
 				return d.name + " in 2015: " + d.max + "%"; // MAIOR NUMERO
@@ -962,7 +968,7 @@ function clevelandDotPlot(){
         .attr("cy", 20)
         .style("fill", "orange")
     clevChart.legend.append("text")
-        .text(clevChart.data[0].min_country)
+        .text(clevChart.country1)
         .style("text-anchor", "end")
         .style("font-size", "12px")
         .attr("transform", "translate("+ ( (clevChart.width / 2) - 45) +",24)")
@@ -974,7 +980,7 @@ function clevelandDotPlot(){
         .attr("cy", 20)
         .style("fill", "#6699FF")
     clevChart.legend.append("text")
-        .text(clevChart.data[0].max_country)
+        .text(clevChart.country2)
         .style("text-anchor", "start")
         .style("font-size", "12px")
         .attr("transform", "translate("+ ( (clevChart.width / 2) + 45) +",24)")

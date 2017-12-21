@@ -208,9 +208,18 @@ function createMap(type){
       d = {}
       d[selectedCode] = "rgba(55,174,174,1)"
       setTimeout(function(){mapObj.map.updateChoropleth(d)},50)
+
     }else{
+      mapObj.removeArcs()
       mapObj.fillCloropleth(getSelectedProduct())
     }
+    mapObj.toggleLegend();
+  }
+  mapObj.toggleLegend = function(){
+    if( $('#bar-cloropleth').hasClass('hide') && mapObj.type == "Product")
+      $('#bar-cloropleth').removeClass('hide')
+    else if( ! $('#bar-cloropleth').hasClass('hide') && mapObj.type == "Country" )
+      $('#bar-cloropleth').addClass('hide')
   }
 
   function interactMap(datamap){
@@ -240,7 +249,7 @@ function createMap(type){
       destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
       mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))
       console.log("generating datadot with selectedCountry: "+selectedCountry)
-      clevChart.update(generateDataDot(selectedCountry, "Portugal",year))
+      clevChart.update(generateDataDot(selectedCountry, " World",year))
       if(currentView == 'Product'){
         currentView = 'Country';
         // REFRESH DOT MATRIX PLOT
