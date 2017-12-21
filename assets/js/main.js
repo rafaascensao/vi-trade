@@ -437,6 +437,8 @@ function startDataDotMatrix(country,options) {
         valuesDot.push({ 'category' : product ,
                          'count' : Math.round(results[0][year] / dot)})
       })
+      valuesDot = valuesDot.sort(function(a,b){return b.count-a.count})
+      console.log(valuesDot)
       DotMatrixChart(valuesDot, options)
   })
 }
