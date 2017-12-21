@@ -206,7 +206,7 @@ function createMap(type){
     if( type == "Country" ){
       // SELECT COUNTRY
       d = {}
-      d[countriesCodes[selectedCountry]] = "rgba(55,174,174,1)"
+      d[selectedCode] = "rgba(55,174,174,1)"
       console.log("UPDATING " + selectedCountry)
       setTimeout(function(){mapObj.map.updateChoropleth(d)},50)
     }else{
@@ -234,6 +234,7 @@ function createMap(type){
     }
     datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
       selectedCountry = geography.properties.name
+      selectedCode = geography.properties.iso
       refreshDotMatrixChart(selectedCountry,chart_options)
       getLineData(selectedCountry,min_year,max_year)
       origin = geography.properties.iso
