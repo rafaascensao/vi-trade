@@ -48,10 +48,10 @@ function startTimeline(){
       refreshBarChart();
     }else if  ($(this).parent().find('p:not(.hidden-class)').text() == "Export"){
       flow = "Export"
-      console.log(flow)
+      refreshViews()
     }else if  ($(this).parent().find('p:not(.hidden-class)').text() == "Import"){
       flow = "Import"
-      console.log(flow)
+      refreshViews()
     }
     mapObj.updateMap(currentView)
   }

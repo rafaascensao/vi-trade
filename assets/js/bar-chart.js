@@ -46,7 +46,10 @@ function startBarchart(){
     tooltip = d3.select("body .toolTip")
 
     svg.select("#country_axis").call(xaxis)
+    .selectAll(".tick text")
+    .call(wrap, padding_left)
     svg.select("#dollars_axis").call(yaxis)
+
     svg.selectAll("rect")
       .data(l)
        .attr("height",Math.floor(w/l.length)-1)
@@ -68,6 +71,7 @@ function startBarchart(){
       var translate = d3.transform(tick.attr("transform")).translate;
       grid.push(translate[0])
     })
+
     svg.select("#names_axis")
        .selectAll("rect")
        .remove()
@@ -83,10 +87,12 @@ function startBarchart(){
     svg = d3.select(".bar-chart_container").append("svg")
                                            .attr("width",w)
                                            .attr("height",h);
+
     svg.append("g")
       .attr("transform","translate("+padding_left+","+(h-(padding_bottom*1.5))+")")
       .attr("id","dollars_axis")
       .call(yaxis)
+
 
     tooltip = d3.select("body").append("div").attr("class", "toolTip");
 
@@ -96,6 +102,7 @@ function startBarchart(){
       .call(xaxis)
         .selectAll("text")
         .attr("font-size","12px")
+        .call(wrap, padding_left)
 
     svg.selectAll("rect")
       .data(l)

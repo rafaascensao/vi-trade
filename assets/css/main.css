@@ -92,14 +92,14 @@
   background: #663300;
 }
 .description > div .color.minerals{
-  background: #66ccff;
+  background: #0f7d6f;
   left: 17%;
 }
 .description > div .color.food{
   background: #003399;
 }
 .description > div .color.chemicals{
-  background: #ffff00;
+  background: #9e9e00;
     left: 13%;
 }
 .description > div .color.plastic{
@@ -112,7 +112,7 @@
   background: #ff9900
 }
 .description > div .color.mach{
-  background: #ff99ff;
+  background: #dc57dc;
 }
 .description.country-view > div{
   color:black;
@@ -135,6 +135,15 @@
 }
 .hide{
   display: none;
+}
+
+.dot_matrix_chart h1{
+  font-size: 15px;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 0px;
+  margin-left: -20px;
+  font-weight: 700;
 }
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }

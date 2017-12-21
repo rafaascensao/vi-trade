@@ -12,7 +12,7 @@ var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chem
 //var productfile = {"Textiles and Clothing", "Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"}
 var globalProducts;
 var countriesCodes = {};
-var productsColors = [[42,147,0],[102,51,0],[102,204,255],[0,51,153],[255,255,0],[112,48,160],[192,0,0],[255,153,0],[255,153,255]]
+var productsColors = [[42,147,0],[102,51,0],[15,125,111],[0,51,153],[158,158,0],[112,48,160],[192,0,0],[255,153,0],[220,87,220]]
 var chart_options = {
      dot_radius : 12,
      no_of_circles_in_a_row: 40,
@@ -1020,7 +1020,7 @@ function clevelandDotPlot(){
 
 
 function wrap (text, width) {
-
+  console.log("WRAPING " + width)
   text.each(function() {
 
     var breakChars = ['/', '&', '-'],
@@ -1064,4 +1064,9 @@ function wrap (text, width) {
 
 function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
+}
+
+
+function refreshViews(){
+  refreshBarChart()
 }
