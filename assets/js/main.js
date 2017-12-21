@@ -12,6 +12,7 @@ var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chem
 //var productfile = {"Textiles and Clothing", "Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"}
 var globalProducts = {};
 var countriesCodes = {};
+var clevChart;
 var productsColors = [[42,147,0],[102,51,0],[15,125,111],[0,51,153],[158,158,0],[112,48,160],[192,0,0],[255,153,0],[220,87,220]]
 var chart_options = {
      dot_radius : 12,
@@ -21,6 +22,7 @@ var chart_options = {
          dot_padding_top : 5,
          dot_padding_bottom : 5
  }
+var firstTime = true;
 //Include html
 w3.includeHTML(computeValues);
 
@@ -37,9 +39,7 @@ function startViews(){
   mapObj = createMap()
   $('.description > div.selected').click()
   startBarchart()
-  $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
-  startDataDotMatrix(selectedCountry,chart_options)
-  clevChart = clevelandDotPlot()
+
 
 }
 
@@ -448,7 +448,7 @@ function startDataDotMatrix(country,options) {
       valuesDot.push({ 'category' : product ,
                        'count' : Math.round(results[year] / dot)})
       })
-      console.log("valuesDot: " + valuesDot)
+      //console.log("valuesDot: " + valuesDot)
       valuesDot = valuesDot.sort(function(a,b){return b.count-a.count})
       //console.log(valuesDot)
       DotMatrixChart(valuesDot, options)
@@ -1003,7 +1003,6 @@ function clevelandDotPlot(){
 
 
 function wrap (text, width) {
-  console.log("WRAPING " + width)
   text.each(function() {
 
     var breakChars = ['/', '&', '-'],
@@ -1081,5 +1080,7 @@ function getCountryTradeEx(country, year, product, top) {
 
 function refreshViews(){
   refreshBarChart()
-
+  clevChart.update(generateDataDot(selectedCountry, " World",year))
+  startDataDotMatrix(selectedCountry, chart_options)
+  getLineData(selectedCountry,min_year,max_year)
 }

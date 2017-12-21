@@ -70,6 +70,8 @@ function toggleFlowChoroplethMap(choropleth_map=false,flow_map=true){
     }
     datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
       selectedCountry = geography.properties.name
+      checkFirstTime()
+      $(".timeline .buttons .toggle-button .options:last-child p").toggleClass('hidden-class')
       refreshDotMatrixChart(selectedCountry,chart_options)
       getLineData(selectedCountry,min_year,max_year)
       console.log(geography.properties.name);
@@ -243,18 +245,22 @@ function createMap(type){
     datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
       selectedCountry = geography.properties.name
       selectedCode = geography.properties.iso
-      refreshDotMatrixChart(selectedCountry,chart_options)
-      getLineData(selectedCountry,min_year,max_year)
+      console.log("Going to checkFirstTime from clicked element on map")
+      checkFirstTime()
+      if( $(".timeline .buttons .toggle-button .options").first().find('p').first().hasClass('hidden-class') )
+        $(".timeline .buttons .toggle-button .options").first().find('p').toggleClass('hidden-class')
+
       origin = geography.properties.iso
       destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
       mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))
-      console.log("generating datadot with selectedCountry: "+selectedCountry)
       clevChart.update(generateDataDot(selectedCountry, " World",year))
       if(currentView == 'Product'){
         currentView = 'Country';
         // REFRESH DOT MATRIX PLOT
         toggleViews()
       }
+      refreshDotMatrixChart(selectedCountry,chart_options)
+      getLineData(selectedCountry,min_year,max_year)
       mapObj.updateMap(currentView)
 
 

@@ -48,9 +48,11 @@ function startTimeline(){
       refreshBarChart();
     }else if  ($(this).parent().find('p:not(.hidden-class)').text() == "Export"){
       flow = "Export"
+      checkFirstTime()
       refreshViews()
     }else if  ($(this).parent().find('p:not(.hidden-class)').text() == "Import"){
       flow = "Import"
+      checkFirstTime()
       refreshViews()
     }
     mapObj.updateMap(currentView)
@@ -62,7 +64,15 @@ function startTimeline(){
     refreshBarChart()
   }
 }
-
+function checkFirstTime(){
+  if(firstTime == true){
+    console.log("FIRST TIME")
+    currentView = "Country"
+    toggleViews()
+    clevelandDotPlot()
+    firstTime = false
+  }
+}
 function toggleViews(){
   if(currentView == "Product"){
     $('.country_view').addClass('hide');
