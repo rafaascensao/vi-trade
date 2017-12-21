@@ -240,7 +240,7 @@ function createMap(type){
       destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
       mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))
       console.log("generating datadot with selectedCountry: "+selectedCountry)
-      clevChart.update(generateDataDot(selectedCountry, "Portugal",year))
+      clevChart.update(generateDataDot(selectedCountry, " World",year))
       if(currentView == 'Product'){
         currentView = 'Country';
         // REFRESH DOT MATRIX PLOT

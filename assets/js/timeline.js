@@ -28,7 +28,7 @@ function startTimeline(){
       //
       refreshBarChart()
       refreshDotMatrixChart(selectedCountry,chart_options)
-      clevChart.update(generateDataDot(selectedCountry, "Portugal",year))
+      clevChart.update(generateDataDot(selectedCountry, " World",year))
 
     }
   });
