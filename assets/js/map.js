@@ -231,6 +231,14 @@ function createMap(type){
       selectedCountry = geography.properties.name
       refreshDotMatrixChart(selectedCountry,chart_options)
       getLineData(selectedCountry,min_year,max_year)
+      if(currentView == 'Product'){
+        currentView = 'Country';
+        // UPDATE MAP
+        mapObj.updateMap(currentView);
+        // REFRESH DOT MATRIX PLOT
+        refreshDotMatrixChart(selectedCountry,chart_options)
+        toggleViews()
+      }
       console.log(geography.properties.name);
       console.log(geography)
     });

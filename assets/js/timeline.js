@@ -38,31 +38,12 @@ function startTimeline(){
   function toggleButtons(){
     $(this).parent().find('p').toggleClass('hidden-class')
     if($(this).parent().find('p:not(.hidden-class)').text() == "Country"){
-      //toggleFlowChoroplethMap(false,true);
       currentView = "Country"
-
-      // ISTO SO FICA ASSIM PARA ESTA ENTREGA, DEPOIS
-      // ESTE CANCRO DESAPARECE DAQUI
-      $('.country_view').removeClass('hide');
-      $('.cleveland_dot_plot').removeClass('hide');
-      $('.bar-chart_container').addClass('hide')
-      $('#bar_chart svg > *').remove();
-
-      $('.description').addClass('country-view')
+      toggleViews()
     }else if ($(this).parent().find('p:not(.hidden-class)').text() == "Product") {
-      //toggleFlowChoroplethMap(true,false);
       currentView = "Product"
+      toggleViews()
       refreshBarChart();
-
-
-      // ISTO SO FICA ASSIM PARA ESTA ENTREGA, DEPOIS
-      // ESTE CANCRO DESAPARECE DAQUI
-      $('.country_view').addClass('hide');
-      $('.cleveland_dot_plot').addClass('hide');
-      $('.bar-chart_container').removeClass('hide')
-
-
-      $('.description').removeClass('country-view')
     }
     mapObj.updateMap(currentView)
   }
@@ -71,5 +52,20 @@ function startTimeline(){
     $(this).addClass('selected')
     mapObj.fillCloropleth($(this).attr('product'))
     refreshBarChart()
+  }
+}
+
+function toggleViews(){
+  if(currentView == "Product"){
+    $('.country_view').addClass('hide');
+    $('.cleveland_dot_plot').addClass('hide');
+    $('.bar-chart_container').removeClass('hide')
+    $('.description').removeClass('country-view')
+  }else{
+    $('.country_view').removeClass('hide');
+    $('.cleveland_dot_plot').removeClass('hide');
+    $('.bar-chart_container').addClass('hide')
+    $('#bar_chart svg > *').remove();
+    $('.description').addClass('country-view')
   }
 }
