@@ -807,31 +807,6 @@ function generateDataDot(country1, country2, year) {
 
 function clevelandDotPlot(){
   clevChart = {}
-  clevChart.xAxisLable = "$"
-  clevChart.yAxisLable = "Products"
-
-  clevChart.data = data
-  clevChart.margin = {top: 10, right: 30, bottom: 30, left: 50};
-  clevChart.width = $('.cleveland_dot_plot').width() - clevChart.margin.left - clevChart.margin.right;
-  clevChart.height = $('.cleveland_dot_plot').height() - clevChart.margin.top - clevChart.margin.bottom;
-
-  clevChart.xScale = d3.scale.linear()
-                             .range([0, clevChart.width])
-                             .domain([0, 100])
-  clevChart.yScale = d3.scale.ordinal()
-                             .rangeRoundBands([ clevChart.margin.top, clevChart.height] , 0.2)
-                             .domain(products)
-
-  clevChart.xAxis = d3.svg.axis()
-                          .scale(clevChart.xScale)
-                          .orient("bottom")
-  clevChart.yAxis = d3.svg.axis()
-                          .scale(clevChart.yScale)
-                          .orient("left")
-                          .innerTickSize([0])
-
-  clevChart.svg
-
 
   clevChart.appendChart = function(){
     clevChart.svg = d3.select(".cleveland_dot_plot")
@@ -1002,10 +977,6 @@ function clevelandDotPlot(){
       .text("Millions $");
 
   }
-  clevChart.update = function(){
-
-  }
-
   return clevChart
 }
 
