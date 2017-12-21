@@ -6,7 +6,7 @@ var year = 2004;
 var selectedCountry = "China"
 var selectedCode = "CHN";
 var countries;
-var flow = "Export"
+var flow = "Import"
 var currentView = 'Product';
 var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"];
 //var productfile = {"Textiles and Clothing", "Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"}
@@ -44,7 +44,7 @@ function startViews(){
 }
 
 function checkReady(){
-  if(globalProducts['Import'] != null){
+  if(globalProducts['Import'] != null && globalProducts['Export'] != null){
     startViews()
   }else{
     setTimeout(checkReady, 250)
@@ -100,18 +100,18 @@ function getSelectedProduct(){
 }
 
 
-function getSumProducts(listProducts, flow){
+function getSumProducts(listProducts, f){
   // QUERY
-  all = {}
-  var sums;
   d3.csv("../../dataGather/derived.csv", function(data){
+    all = {}
+    var sums;
   listProducts.forEach(function(product){
-    console.log("Computing Exports")
+    console.log("Computing " + f)
   	console.log("Computing " + product)
   	count = {}
   	countries.forEach(function(country){
       results = data.filter(function(element){
-        return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == flow;
+        return element["Product Group"] == product && element["Reporter Name"] == country && element["Trade Flow"] == f;
       })
 		  count[country] = {}
       for(i = min_year; i <= max_year; i++){
@@ -120,15 +120,16 @@ function getSumProducts(listProducts, flow){
     })
     all[product] = count
   })
-  globalProducts[flow] = all
+  globalProducts[f] = all
 })
+
 }
 
 function computeQuintiles(product){
   x = []
   countries.forEach(function(count){
     if (count != " World" && count != "European Union"){
-    x.push(parseFloat(globalProducts['Export'][product][count][year]))}
+    x.push(parseFloat(globalProducts[flow][product][count][year]))}
   })
 
   x = x.sort(function(a,b){ return a-b})
@@ -146,7 +147,7 @@ function getCountryExport(top){
   var country_export={};
   countries.forEach(function(c){
     if (c != " World" && c != "European Union"){
-      country_export[c]=globalProducts['Export'][cur_product][c][year]
+      country_export[c]=globalProducts[flow][cur_product][c][year]
     }
   })
   //sorts the array by value
@@ -181,7 +182,7 @@ function barchart() {
   var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    var data = globalProducts['Export'][getSelectedProduct()][year]
+    var data = globalProducts[flow][getSelectedProduct()][year]
     data.sort(function(a, b) { return a.value - b.value; });
 
     x.domain([0, d3.max(data, function(d) { return d.value; })]);
@@ -440,10 +441,10 @@ function startDataDotMatrix(country,options) {
   var results;
   dot = computeDotValue(country, globalProducts, entries)
   products.forEach(function(product){
-      results = globalProducts['Export'][product][country]
+      results = globalProducts[flow][product][country]
       if(typeof results === 'undefined'){
             countryName = getKeyByValue(countriesCodes, selectedCode)
-            results = globalProducts['Export'][product][countryName]
+            results = globalProducts[flow][product][countryName]
       }
       valuesDot.push({ 'category' : product ,
                        'count' : Math.round(results[year] / dot)})
@@ -457,10 +458,10 @@ function computeDotValue(country, data, entries) {
   sum = 0
   var results;
   products.forEach(function(product){
-    results = data['Export'][product][country]
+    results = data[flow][product][country]
     if(typeof results === 'undefined'){
       countryName = getKeyByValue(countriesCodes, selectedCode)
-      results = globalProducts['Export'][product][countryName]
+      results = globalProducts[flow][product][countryName]
       }
     sum = sum + parseInt(results[year])
   })
@@ -490,10 +491,10 @@ function getLineData(country, initialYear, finalYear){
     lineSet[i]["year"] = j
     var results;
     products.forEach(function(product){
-      results = globalProducts['Export'][product][country]
+      results = globalProducts[flow][product][country]
       if(typeof results === 'undefined'){
           countryName = getKeyByValue(countriesCodes, selectedCode)
-          results = globalProducts['Export'][product][countryName]
+          results = globalProducts[flow][product][countryName]
       }
       lineSet[i][product] = parseInt(results[j] / 1000)
       })
@@ -765,11 +766,11 @@ function generateDataDot(country1, country2, year) {
   var dataDot = []
   var dataline={}
   products.forEach(function(p){
-    if (parseFloat(globalProducts['Export'][p][country1][year])<=parseFloat(globalProducts['Export'][p][country2][year])) {
-        dataDot.push({"name" : p, "min" : parseFloat(globalProducts['Export'][p][country1][year])/1000, "max" : parseFloat(globalProducts['Export'][p][country2][year])/1000, "min_country" : country1, "max_country" : country2})
+    if (parseFloat(globalProducts[flow][p][country1][year])<=parseFloat(globalProducts[flow][p][country2][year])) {
+        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[flow][p][country1][year])/1000, "max" : parseFloat(globalProducts[flow][p][country2][year])/1000, "min_country" : country1, "max_country" : country2})
     }
     else {
-        dataDot.push({"name" : p, "min" : parseFloat(globalProducts['Export'][p][country2][year])/1000, "max" : parseFloat(globalProducts['Export'][p][country1][year])/1000, "min_country" : country2, "max_country" : country1})
+        dataDot.push({"name" : p, "min" : parseFloat(globalProducts[flow][p][country2][year])/1000, "max" : parseFloat(globalProducts[flow][p][country1][year])/1000, "min_country" : country2, "max_country" : country1})
     }
   })
   //dataDot[i] = {"name" : products[i] , productvaluecountry1 : 70 , "max" : productvaluecountry2 , "min_country" : country1 , "max_country" : country2 }
