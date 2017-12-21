@@ -6,6 +6,7 @@ var year = 2004;
 var selectedCountry = "China"
 var selectedCode = "CHN";
 var countries;
+var flow = "Export"
 var currentView = 'Product';
 var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"];
 //var productfile = {"Textiles and Clothing", "Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"}
@@ -970,6 +971,7 @@ function clevelandDotPlot(){
     .selectAll(".tick text")
       .call(wrap, clevChart.margin.left)
 
+
     clevChart.svg.append("text")
       .attr("class", "xlabel")
       .attr("transform", "translate(" + (clevChart.margin.left + clevChart.width / 2) + " ," +
@@ -978,11 +980,33 @@ function clevelandDotPlot(){
       .attr("dy", "2")
       .text("Millions $");
 
-    clevChart.svg.append("g")
+    clevChart.legend = clevChart.svg.append("g")
       .attr("class", "countries_legend")
       .attr("transform" , "translate("+ clevChart.margin.left + ")")
-      .append("circle")
 
+
+    clevChart.legend.append("circle")
+        .attr("r", clevChart.yScale.rangeBand()/4)
+        .attr("cx", (clevChart.width / 2) - 30)
+        .attr("cy", 20)
+        .style("fill", "orange")
+    clevChart.legend.append("text")
+        .text(clevChart.data[0].min_country)
+        .style("text-anchor", "end")
+        .style("font-size", "12px")
+        .attr("transform", "translate("+ ( (clevChart.width / 2) - 45) +",24)")
+
+
+    clevChart.legend.append("circle")
+        .attr("r", clevChart.yScale.rangeBand()/4)
+        .attr("cx", (clevChart.width / 2) + 30)
+        .attr("cy", 20)
+        .style("fill", "#6699FF")
+    clevChart.legend.append("text")
+        .text(clevChart.data[0].max_country)
+        .style("text-anchor", "start")
+        .style("font-size", "12px")
+        .attr("transform", "translate("+ ( (clevChart.width / 2) + 45) +",24)")
 
   }
   return clevChart
