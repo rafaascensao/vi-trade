@@ -111,7 +111,7 @@ function fillCloropleth(product){
   x = []
   countries.forEach(function(count){
     if (count != " World" && count != "European Union"){
-    x.push(parseFloat(globalProducts[product][count][year]))}
+    x.push(parseFloat(globalProducts['Export'][product][count][year]))}
   })
   x = x.sort(function(a,b){ return a-b})
   no_zeros = x.filter(function(el){ return el != 0 })
@@ -137,7 +137,7 @@ function fillCloropleth(product){
 
   countries.forEach(function(count){
     if (count != " World" && count != "European Union"){
-    value = parseFloat(globalProducts[product][count][year])
+    value = parseFloat(globalProducts['Export'][product][count][year])
     if (value == 0){
       dic[countriesCodes[count]] = "rgba(129,129,130,1)"
     }
@@ -298,7 +298,7 @@ function createMap(type){
     x = []
     countries.forEach(function(count){
       if (count != " World" && count != "European Union"){
-      x.push(parseFloat(globalProducts[product][count][year]))}
+      x.push(parseFloat(globalProducts['Export'][product][count][year]))}
     })
     x = x.sort(function(a,b){ return a-b})
     no_zeros = x.filter(function(el){ return el != 0 })
@@ -319,7 +319,7 @@ function createMap(type){
 
     countries.forEach(function(count){
       if (count != " World" && count != "European Union"){
-      value = parseFloat(globalProducts[product][count][year])
+      value = parseFloat(globalProducts['Export'][product][count][year])
       if (value == 0){
         dic[countriesCodes[count]] = "rgba(129,129,130,1)"
       }
