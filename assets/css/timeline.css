@@ -6,11 +6,61 @@
   padding:0px;
 }
 .timeline .buttons .toggle-button{
-  width:50%;
+  width:33.33333%;
   float:left;
   padding-top:10px;
   padding-left: 5px;
   padding-bottom: 10px;
+}
+.timeline .buttons > div{
+  width:33.33333%;
+  float:left;
+}
+.timeline .buttons > div:last-child{
+  position: relative;
+}
+.timeline .buttons > div:last-child > p{
+  float: left;
+  width: 100%;
+  font-size: 12px;
+  margin-bottom: 0px;
+  text-align: left;
+}
+.timeline .buttons > div:last-child > .list{
+  float: left;
+  width: 100%;
+  position: absolute;
+  top: 46px;
+  background: white;
+  z-index: 1;
+  max-height: 116px;
+  overflow: hidden;
+  overflow-y: auto;
+  transition: max-height 250ms ease-in-out;
+}
+.timeline .buttons > div:last-child > .list.unlisted{
+  max-height: 0px;
+}
+.timeline .buttons > div:last-child > .list .item{
+  border-left: solid 1px;
+  border-bottom: solid 1px;
+  border-right: solid 1px;
+  padding:2px 0px;
+  cursor:pointer;
+  transition: all 250ms ease-in-out;
+  background: white;
+}
+.timeline .buttons > div:last-child > .list .item:hover,
+.timeline .buttons > div:last-child > .list .item.selected{
+  background: grey;
+  color: white;
+}
+.timeline .buttons > div:last-child input{
+  float: left;
+  width: 100%;
+  border-radius: 5px;
+  border: solid 1px;
+  padding: 1px 6px;
 }
 .timeline .buttons .toggle-button:first-child{
   padding-left: 30px;

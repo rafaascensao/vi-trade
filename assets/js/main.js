@@ -40,9 +40,20 @@ function startViews(){
   $('.description > div.selected').click()
   startBarchart()
 
+  $('.timeline .buttons > div:last-child input').focusin(function(){
+    $('.timeline .buttons > div:last-child > .list').removeClass('unlisted')
+  })
+  $('.timeline .buttons > div:last-child input').focusout(function(){
+    $('.timeline .buttons > div:last-child > .list').addClass('unlisted')
+  })
+
+  $('.timeline .buttons > div:last-child input').keyup(filterCountries)
+
 
 }
+function openListCountries(){
 
+}
 function checkReady(){
   if(globalProducts['Import'] != null && globalProducts['Export'] != null){
     startViews()

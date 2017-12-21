@@ -245,7 +245,6 @@ function createMap(type){
     datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
       selectedCountry = geography.properties.name
       selectedCode = geography.properties.iso
-      console.log("Going to checkFirstTime from clicked element on map")
       checkFirstTime()
       if( $(".timeline .buttons .toggle-button .options").first().find('p').first().hasClass('hidden-class') )
         $(".timeline .buttons .toggle-button .options").first().find('p').toggleClass('hidden-class')

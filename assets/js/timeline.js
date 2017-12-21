@@ -87,3 +87,15 @@ function toggleViews(){
     $('.description').addClass('country-view')
   }
 }
+
+function filterCountries(){
+  var that = this, $allListElements = $('.timeline .buttons > div:last-child > .list .item');
+
+  var $matchingListElements = $allListElements.filter(function(i, li){
+      var listItemText = $(li).text().toUpperCase(), searchText = that.value.toUpperCase();
+      return ~listItemText.indexOf(searchText);
+  });
+
+  $allListElements.hide();
+  $matchingListElements.show();
+}
