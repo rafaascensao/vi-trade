@@ -38,7 +38,12 @@ function startViews(){
   startBarchart()
   $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
   startDataDotMatrix(selectedCountry,chart_options)
+<<<<<<< HEAD
   clevChart = clevelandDotPlot()
+=======
+  clevChart = clevelandDotPlot(dataDot)
+  clevChart.render()
+>>>>>>> d2b59f1ddbcc7fc22d196cc74d579bc1d08890c1
 }
 
 function checkReady(){
@@ -63,14 +68,16 @@ function open(){
 
 //set countriesCodes[country]
 function generateCodesDic(){
-  var codes;
   d3.csv("../../dataGather/countryCodes.csv", function(data){
-    codes = data;
-    countries.forEach(function(country){
+    var i;
+    codes = data
+    for(i=0; i < codes.length; i++){
+      countriesCodes[codes[i]["Name"]] = codes[i]["Code"]
+    }
+    /*countries.forEach(function(country){
       code = codes.filter(function(el){ return el["Name"] == country})
       countriesCodes[country] = code[0]["Code"];
-    })
-
+    })*/
   })
 }
 
@@ -804,6 +811,31 @@ function generateDataDot(country1, country2, year) {
 
 function clevelandDotPlot(){
   clevChart = {}
+  clevChart.xAxisLable = "$"
+  clevChart.yAxisLable = "Products"
+
+  clevChart.data = data
+  clevChart.margin = {top: 10, right: 30, bottom: 30, left: 50};
+  clevChart.width = $('.cleveland_dot_plot').width() - clevChart.margin.left - clevChart.margin.right;
+  clevChart.height = $('.cleveland_dot_plot').height() - clevChart.margin.top - clevChart.margin.bottom;
+
+  clevChart.xScale = d3.scale.linear()
+                             .range([0, clevChart.width])
+                             .domain([0, 100])
+  clevChart.yScale = d3.scale.ordinal()
+                             .rangeRoundBands([ clevChart.margin.top, clevChart.height] , 0.2)
+                             .domain(products)
+
+  clevChart.xAxis = d3.svg.axis()
+                          .scale(clevChart.xScale)
+                          .orient("bottom")
+  clevChart.yAxis = d3.svg.axis()
+                          .scale(clevChart.yScale)
+                          .orient("left")
+                          .innerTickSize([0])
+
+  clevChart.svg
+
 
   clevChart.appendChart = function(){
     clevChart.svg = d3.select(".cleveland_dot_plot")
@@ -811,6 +843,7 @@ function clevelandDotPlot(){
                       .attr("width", clevChart.width + clevChart.margin.left + clevChart.margin.right)
                       .attr("height", clevChart.height + clevChart.margin.top + clevChart.margin.bottom)
   }
+<<<<<<< HEAD
 
   clevChart.update = function(data){
     clevChart.xAxisLable = "$"
@@ -846,6 +879,8 @@ function clevelandDotPlot(){
     clevChart.render()
   }
 
+=======
+>>>>>>> d2b59f1ddbcc7fc22d196cc74d579bc1d08890c1
   clevChart.render = function(){
 
     // Make the faint lines from y labels to highest dot
@@ -908,9 +943,19 @@ function clevelandDotPlot(){
 					.attr("cy", function(d) {
 						return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
 					})
+					.style("stroke", function(d){
+						if (d.name === "The World") {
+							return "black";
+						}
+					})
+					.style("fill", function(d){
+						if (d.name === "The World") {
+							return "darkorange";
+						}
+					})
 					.append("title")
 					.text(function(d) {
-						return d.name + " in 1990: " + d.min ; //MENOR NUMERO
+						return d.name + " in 1990: " + d.min + "%"; //MENOR NUMERO
 					});
 
     // Make the dots for 2015
@@ -928,9 +973,19 @@ function clevelandDotPlot(){
 			.attr("cy", function(d) {
 				return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
 			})
+			.style("stroke", function(d){
+				if (d.name === "The World") {
+					return "black";
+				}
+			})
+			.style("fill", function(d){
+				if (d.name === "The World") {
+					return "#476BB2";
+				}
+			})
 			.append("title")
 			.text(function(d) {
-				return d.name + " in 2015: " + d.max ; // MAIOR NUMERO
+				return d.name + " in 2015: " + d.max + "%"; // MAIOR NUMERO
 			});
 
 
@@ -954,7 +1009,14 @@ function clevelandDotPlot(){
       .text("Millions $");
 
   }
+  clevChart.update = function(){
 
+  }
+
+<<<<<<< HEAD
+=======
+  clevChart.appendChart()
+>>>>>>> d2b59f1ddbcc7fc22d196cc74d579bc1d08890c1
   return clevChart
 }
 
