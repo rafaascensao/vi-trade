@@ -38,12 +38,8 @@ function startViews(){
   startBarchart()
   $('.timeline .buttons .toggle-button .options p:not(.hidden-class)').click()
   startDataDotMatrix(selectedCountry,chart_options)
-<<<<<<< HEAD
   clevChart = clevelandDotPlot()
-=======
-  clevChart = clevelandDotPlot(dataDot)
-  clevChart.render()
->>>>>>> d2b59f1ddbcc7fc22d196cc74d579bc1d08890c1
+
 }
 
 function checkReady(){
@@ -843,7 +839,6 @@ function clevelandDotPlot(){
                       .attr("width", clevChart.width + clevChart.margin.left + clevChart.margin.right)
                       .attr("height", clevChart.height + clevChart.margin.top + clevChart.margin.bottom)
   }
-<<<<<<< HEAD
 
   clevChart.update = function(data){
     clevChart.xAxisLable = "$"
@@ -879,8 +874,6 @@ function clevelandDotPlot(){
     clevChart.render()
   }
 
-=======
->>>>>>> d2b59f1ddbcc7fc22d196cc74d579bc1d08890c1
   clevChart.render = function(){
 
     // Make the faint lines from y labels to highest dot
@@ -1013,10 +1006,6 @@ function clevelandDotPlot(){
 
   }
 
-<<<<<<< HEAD
-=======
-  clevChart.appendChart()
->>>>>>> d2b59f1ddbcc7fc22d196cc74d579bc1d08890c1
   return clevChart
 }
 
