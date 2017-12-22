@@ -12,6 +12,7 @@ var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chem
 //var productfile = {"Textiles and Clothing", "Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"}
 var globalProducts = {};
 var countriesCodes = {};
+var topCountry = {}
 var clevChart;
 var productsColors = [[42,147,0],[102,51,0],[15,125,111],[0,51,153],[158,158,0],[112,48,160],[192,0,0],[255,153,0],[220,87,220]]
 var chart_options = {
@@ -81,7 +82,7 @@ function refreshTitleClevChart(){
   $('.cleveland_dot_plot h1').html("TRADE COMPARISON BETWEEN "+clevChart.country1+" AND "+clevChart.country2)
 }
 function checkReady(){
-  if(globalProducts['Import'] != null && globalProducts['Export'] != null){
+  if(topCountry['Import'] != null && topCountry['Export'] != null){
     startViews()
   }else{
     setTimeout(checkReady, 250)
@@ -96,9 +97,50 @@ function open(){
     generateCodesDic();        //set countriesCodes[country]
     getSumProducts(products, 'Export');
     getSumProducts(products, 'Import');  //set globalProducts
+    getCountryTradeTop('Export');
+    getCountryTradeTop('Import');
     $('.loader').addClass('hidden')
     $('.row').removeClass('hidden')
   })
+}
+
+/*function removeNonCountriesTop(){
+  var i;
+  for(i = min_year; i<=max_year; i++){
+    keysE = Object.keys(topCountry['Export'][i])
+    keysE.forEach(function(key){
+      if(!countries.includes(key)){
+        delete topCountry['Export'][i][key]
+      }
+    })
+    keysI = Object.keys(topCountry['Import'][i])
+    keysI.forEach(function(key){
+      if(!countries.includes(key)){
+        delete topCountry['Import'][i][key]
+      }
+    })
+  }
+}*/
+function getCountryTradeTop(f) {
+    years = {}
+    for(i=min_year; i<=max_year; i++){
+        var filename="../../dataGather/top/"+"top"+year.toString()+".csv"
+        top = {}
+        d3.csv(filename, function(d){
+          countries.forEach(function(country){
+                value = {}
+                results = d.filter(function(element){
+                  return element["Reporter Name"] == country && element["Trade Flow"] == f;
+                })
+                results.forEach(function(result){
+                  value[result['Partner Name']] = [result['Value'], result['Product Group']]
+                })
+                top[country] = value
+          })
+        })
+        years[i] = top
+      }
+      topCountry[f] = years
 }
 
 //set countriesCodes[country]
@@ -1113,37 +1155,7 @@ function getKeyByValue(object, value) {
 }
 
 
-function getCountryTradeEx(country, year, product, top) {
-    var filename="../../dataGather/traderel/"+product+"trade"+year.toString()+".csv"
-    console.log(filename)
-    d3.csv(filename, function(data){
-     	  var count = []
-        countries.forEach(function(c){
-          if (flow=="Export"){
-            countryyeardata=data.filter(function(element){
-              return element["Reporter Name"] == country && element["Partner Name"] == c;
-            })}
-          else {
-            countryyeardata=data.filter(function(element){
-              return element["Reporter Name"] == c && element["Partner Name"] == country;
-            })
-          }
-          if (c != " World" && c != "European Union"){
-            if(typeof countryyeardata[0] === 'undefined') {
-              count.push({'Partner' : c, 'Trade_value': 0})
-            }
-            else{
-              count.push({'Partner' : c, 'Trade_value': parseFloat(countryyeardata[0][year])})
-            }
-          }
 
-        })
-        count.sort(function(a,b){return parseFloat(b.Trade_value)- parseFloat(a.Trade_value)});
-        console.log(count.slice(0,top))
-        return count.slice(0,top)
-
-    })
-}
 
 
 function refreshViews(){
