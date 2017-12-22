@@ -82,7 +82,7 @@ function refreshTitleClevChart(){
   $('.cleveland_dot_plot h1').html("TRADE COMPARISON BETWEEN "+clevChart.country1+" AND "+clevChart.country2)
 }
 function checkReady(){
-  if(globalProducts['Import'] != null && globalProducts['Export'] != null){
+  if(topCountry['Import'] != null && topCountry['Export'] != null){
     startViews()
   }else{
     setTimeout(checkReady, 250)
