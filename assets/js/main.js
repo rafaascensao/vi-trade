@@ -123,13 +123,15 @@ function open(){
   }
 }*/
 function getCountryTradeTop(f) {
-    var years = {};
-    for(i=min_year; i<=max_year; i++){
-        var filename="../../dataGather/top/"+"top"+year.toString()+".csv"
-        var top_fifteen = {};
+    var filename="../../dataGather/top/"+"top.csv"
         d3.csv(filename, function(data){
-          countries.forEach(function(country){
-                var value = {};
+          var years = {};
+          for(i=min_year; i<=max_year; i++){
+            console.log("TOP YEAR: " + i)
+            var top_fifteen = {};
+            countries.forEach(function(country){
+              console.log(country)
+              var value = {};
                 results = data.filter(function(element){
                   return element["Reporter Name"] == country && element["Trade Flow"] == f;
                 })
@@ -138,11 +140,12 @@ function getCountryTradeTop(f) {
                 })
                 top_fifteen[country] = value
           })
-        })
-        years[i] = top_fifteen
+          years[i] = top_fifteen
+        }
+        topCountry[f] = years
+      })
+
       }
-      topCountry[f] = years
-}
 
 //set countriesCodes[country]
 function generateCodesDic(){
