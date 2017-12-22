@@ -83,7 +83,7 @@ function refreshTitleClevChart(){
   $('.cleveland_dot_plot h1').html("TRADE COMPARISON BETWEEN "+clevChart.country1+" AND "+clevChart.country2)
 }
 function checkReady(){
-  if(/*topCountry['Import'] != null && topCountry['Export'] != null  &&*/ globalProducts['Import'] != null  && globalProducts['Export'] != null){
+  if(globalProducts['Import'] != null  && globalProducts['Export'] != null){
     $('.loader').addClass('hidden')
     $('.row').removeClass('hidden')
     startViews()
@@ -122,6 +122,45 @@ function open(){
     })
   }
 }*/
+function getCountryTradeTop(country, year, top) {
+    var filename="../../dataGather/traderel/trade"+year.toString()+".csv"
+    var countryyeardata=[]
+    //console.log(filename)
+    d3.csv(filename, function(data){
+     	var count = []
+      products.forEach(function(prod){
+        countries.forEach(function(c){
+          if (flow=="Export"){
+            countryyeardata=data.filter(function(element){
+              return element["Reporter Name"] == country && element["Partner Name"] == c && element["Product Group"] == prod;
+            })}
+          else {
+            countryyeardata=data.filter(function(element){
+              return element["Reporter Name"] == c && element["Partner Name"] == country && element["Product Group"] == prod;
+            })
+          }
+          if (c != " World" && c != "European Union"){
+            //console.log(countryyeardata[0])
+            if(typeof countryyeardata[0] === 'undefined') {
+              var pair=[0, 0]
+              count.push({'Partner' : c, 'Trade_value': pair})
+            }
+            else{
+              var pair=[parseFloat(countryyeardata[0][year]), countryyeardata[0]["Product Group"]]
+              count.push({'Partner' : c, 'Trade_value': pair})
+              //console.log({'Partner' : c, 'Trade_value': pair})
+            }
+          }
+
+        })
+      })
+        //console.log(countryyeardata)
+      count.sort(function(a,b){return parseFloat(b.Trade_value[0])- parseFloat(a.Trade_value[0])});
+      console.log(count.slice(0,top))
+      return count.slice(0,top)
+    })
+}
+/*
 function getCountryTradeTop(f) {
     var filename="../../dataGather/top/"+"top.csv"
         d3.csv(filename, function(data){
@@ -144,9 +183,8 @@ function getCountryTradeTop(f) {
         }
         topCountry[f] = years
       })
-
-      }
-
+}
+*/
 //set countriesCodes[country]
 function generateCodesDic(){
   d3.csv("../../dataGather/countryCodes.csv", function(data){
