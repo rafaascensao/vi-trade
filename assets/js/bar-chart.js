@@ -95,6 +95,7 @@ function startBarchart(){
       .attr("transform","translate("+padding_left+","+(h-(padding_bottom*1.5))+")")
       .attr("id","dollars_axis")
       .call(yaxis)
+      .append("text")
       .text("Millions $")
       .attr("x", (w / 2)-30)
       .attr("y", 30)

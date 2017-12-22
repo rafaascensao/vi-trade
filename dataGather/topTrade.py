@@ -22,13 +22,13 @@ def getTopImport(top, country, year):
     data = dfExport.loc[(dfExport['Partner Name'] == country) & (dfExport['Reporter Name'] != " World") & (dfExport['Reporter Name'] != 'European Union') & (dfExport['Product Group'] != 'All Products')]
     return getTop(top, data, country, year)
 
-for year in years:
-    print("YEAR: " + year)
-    print("----------------------------------------------------------------------------------__")
-    filename = 'top/top' + year + '.csv'
-    with open(filename, 'w') as f:
+filename = 'top/top.csv'
+with open(filename, 'w') as f:
+    for year in years:
+        print("YEAR: " + year)
+        print("----------------------------------------------------------------------------------__")
         wr = csv.writer(f)
-        columns = ['Reporter Name', 'Partner Name', 'Trade Flow', 'Product Group', 'Value']
+        columns = ['Reporter Name', 'Partner Name', 'Year', 'Trade Flow', 'Product Group', 'Value']
         wr.writerow(columns)
         for country in countries:
             print("Country: ", country)
@@ -37,7 +37,7 @@ for year in years:
             for index, row in top.iterrows():
                 myList = [country]
                 myList.extend([row['Partner Name']])
-                myList.extend(['Export'])
+                myList.extend(['Export', year])
                 myList.extend([row['Product Group']])
                 myList.extend([row[year]])
                 wr.writerow(myList)
@@ -47,7 +47,7 @@ for year in years:
             for index, row in top.iterrows():
                 myList = [country]
                 myList.extend([row['Reporter Name']])
-                myList.extend(['Import'])
+                myList.extend(['Import', year])
                 myList.extend([row['Product Group']])
                 myList.extend([row[year]])
                 wr.writerow(myList)
