@@ -140,7 +140,8 @@ body{
 .hide{
   display: none;
 }
-.toolTip2{
+.toolTip2,
+.toolTip3{
   position: absolute;
   display: none;
   min-width: 80px;
@@ -149,8 +150,16 @@ body{
   border: 1px solid #6F257F;
   padding: 14px;
   text-align: center;
+  border-radius: 10px;
 }
-
+.toolTip3{
+  padding:4px !important;
+}
+.toolTip3 p{
+  margin-top:0px;
+  margin-bottom: 0px;
+  font-size: 14px;
+}
 .dot_matrix_chart h1{
   font-size: 15px;
   text-align: center;

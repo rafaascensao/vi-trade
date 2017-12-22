@@ -189,7 +189,7 @@ function createMap(type){
   mapObj = {}
 
   mapObj.type = type
-
+  mapObj.toolTip =  d3.select("body").append("div").attr("class", "toolTip3");
   mapObj.map = new Datamap({
     scope: 'world',
     element: document.getElementById('map'),
@@ -221,6 +221,27 @@ function createMap(type){
       d = {}
       d[selectedCode] = "rgba(55,174,174,1)"
       setTimeout(function(){mapObj.map.updateChoropleth(d)},50)
+
+      mapObj.map.svg.selectAll('path.datamaps-arc')
+          .on('mousemove', function(d){
+            console.log(d)
+            product = d.trade.product
+            value = d.trade.value
+            from = d.trade.from
+            to = d.trade.to
+            mapObj.toolTip
+                    .style("left", d3.event.pageX - 50 + "px")
+                    .style("top", d3.event.pageY - 70 + "px")
+                    .style('display','inline-block')
+                    .html("<p>Product: "+product+"</p><p>Value: "+value+"Thousands $</p><p>From: "+from+"</p><p>To: "+to+"</p>")
+                  /*  .transition()
+                    .duration(2000)
+                    .style('display','none')*/
+          })
+          .on('mouseout', function(d){
+            setTimeout(function(){mapObj.toolTip
+                  .style('display','none')},3000)
+          })
 
     }else{
       mapObj.removeArcs()
@@ -302,7 +323,12 @@ function createMap(type){
 
     newArcs.forEach(function(el){
       el.options = { strokeWidth: stroke_width -= 0.5 ,
-                      strokeColor: convertColorToString(productsColors[i])}
+                      strokeColor: convertColorToString(productsColors[i]),
+                      trade: {product : "Wood",
+                              value: 2314342.2312,
+                              from : "Portugal",
+                              to:  "Spain" }
+                    }
       i++;
     })
   	mapObj.map.arc(newArcs, );
