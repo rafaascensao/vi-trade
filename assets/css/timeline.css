@@ -33,7 +33,7 @@
   top: 46px;
   background: white;
   z-index: 1;
-  max-height: 116px;
+  max-height: 348px;
   overflow: hidden;
   overflow-y: auto;
   transition: max-height 250ms ease-in-out;
