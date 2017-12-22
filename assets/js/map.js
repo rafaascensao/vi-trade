@@ -199,12 +199,18 @@ function createMap(type){
     },
     done: function(datamap){
       interactMap(datamap)
-    }/*,
+    },
     "geographyConfig" :
       {popupTemplate: function(geo, data){
-        return "<div class=hoverinfo><strong>A:: "+geography.properties.name+"</strong></div>"
+        if(currentView == "Product"){
+          return "<div class='hoverinfo'><p style='text-align:center;font-weight:700;margin-top:10px;margin-bottom:0px;'>"+geo.properties.name+"</p><p>"+parseInt(globalProducts[flow][getSelectedProduct()][geo.properties.name][year] / 1000)+" Millions ($)</p><p>of</p><p>"+getSelectedProduct()+"</p></div>"
+        }else{
+          return "<div class='hoverinfo'>"+geo.properties.name+"</div>"
+        }
+      } ,
+      popupOnHover: true
+
       }
-    }*/
   });
 
   mapObj.updateMap = function(type){
