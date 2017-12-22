@@ -123,6 +123,9 @@ function open(){
   }
 }*/
 
+function refreshArcsFromMap(){
+  mapObj.createOriginDestinationList(origin, destinations)
+}
 function getCountryTradeTop(country, year, top) {
     var filename="../../dataGather/traderel/trade"+year.toString()+".csv"
     var countryyeardata=[]
@@ -158,6 +161,33 @@ function getCountryTradeTop(country, year, top) {
         //console.log(countryyeardata)
       count.sort(function(a,b){return parseFloat(b.Trade_value[0])- parseFloat(a.Trade_value[0])});
       console.log(count.slice(0,top))
+      var final = count.slice(0,top)
+      var destinations = []
+      final.forEach(function(el){
+        destinations.push( {destination: el.Partner , val: el.Trade_value[0] , product: el.Trade_value[1] })
+      })
+      console.log(mapObj.createOriginDestinationList(country, destinations))
+      mapObj.refreshArcs(mapObj.createOriginDestinationList(country, destinations))
+      mapObj.map.svg.selectAll('path.datamaps-arc')
+          .on('mousemove', function(d){
+            console.log(d)
+            product = d.trade.product
+            value = d.trade.value
+            from = d.trade.from
+            to = d.trade.to
+            mapObj.toolTip
+                    .style("left", d3.event.pageX - 50 + "px")
+                    .style("top", d3.event.pageY - 70 + "px")
+                    .style('display','inline-block')
+                    .html("<p>Product: "+product+"</p><p>Value: "+parseInt(value/1000)+"Thousands $</p><p>From: "+from+"</p><p>To: "+to+"</p>")
+                  /*  .transition()
+                    .duration(2000)
+                    .style('display','none')*/
+          })
+          .on('mouseout', function(d){
+            setTimeout(function(){mapObj.toolTip
+                  .style('display','none')},3000)
+          })
       return count.slice(0,top)
     })
 }

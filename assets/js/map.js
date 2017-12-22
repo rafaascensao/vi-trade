@@ -233,7 +233,7 @@ function createMap(type){
                     .style("left", d3.event.pageX - 50 + "px")
                     .style("top", d3.event.pageY - 70 + "px")
                     .style('display','inline-block')
-                    .html("<p>Product: "+product+"</p><p>Value: "+value+"Thousands $</p><p>From: "+from+"</p><p>To: "+to+"</p>")
+                    .html("<p>Product: "+product+"</p><p>Value: "+parseInt(value/1000)+"Thousands $</p><p>From: "+from+"</p><p>To: "+to+"</p>")
                   /*  .transition()
                     .duration(2000)
                     .style('display','none')*/
@@ -290,9 +290,10 @@ function createMap(type){
     if( $(".timeline .buttons .toggle-button .options").first().find('p').first().hasClass('hidden-class') )
       $(".timeline .buttons .toggle-button .options").first().find('p').toggleClass('hidden-class')
 
-    origin = geography.properties.iso
+    /*origin = geography.properties.iso
     destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
-    mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))
+    mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))*/
+    getCountryTradeTop(selectedCountry, year, 10)
     clevChart.update(generateDataDot(selectedCountry, " World",year))
     if(currentView == 'Product'){
       currentView = 'Country';
@@ -307,7 +308,7 @@ function createMap(type){
   mapObj.createOriginDestinationList = function(origin, destinations){
   	res = [];
   	destinations.forEach(function(el){
-      res.push({ origin: origin, destination: el})
+      res.push({ origin: countriesCodes[origin],/* destination: el})*/ destination: countriesCodes[el.destination] , value: el.val , product: el.product})
   	});
   	return res
   }
@@ -323,14 +324,15 @@ function createMap(type){
 
     newArcs.forEach(function(el){
       el.options = { strokeWidth: stroke_width -= 0.5 ,
-                      strokeColor: convertColorToString(productsColors[i]),
-                      trade: {product : "Wood",
-                              value: 2314342.2312,
-                              from : "Portugal",
-                              to:  "Spain" }
+                      strokeColor: convertColorToString(productsColors[products.indexOf(el.product)]),
+                      trade: {product : el.product,
+                              value: el.value,
+                              from : el.origin,
+                              to:  el.destination }
                     }
       i++;
     })
+    console.log(newArcs)
   	mapObj.map.arc(newArcs, );
   }
   /* ZOOM */
