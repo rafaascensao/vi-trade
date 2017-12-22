@@ -49,6 +49,7 @@ function startViews(){
     $('.timeline .buttons > div:last-child > .list').addClass('unlisted')
     $('.timeline .buttons > div:last-child input').attr('value',selectedCountry)
   })
+  $('.timeline .buttons > div:last-child input').keyup(filterCountries)
   $('.timeline .buttons > div:last-child > .list .item').click(function(){
     $('.timeline .buttons > div:last-child > .list .item').removeClass('selected')
     var isoCode = $(this).attr('iso')
@@ -82,7 +83,9 @@ function refreshTitleClevChart(){
   $('.cleveland_dot_plot h1').html("TRADE COMPARISON BETWEEN "+clevChart.country1+" AND "+clevChart.country2)
 }
 function checkReady(){
-  if(topCountry['Import'] != null && topCountry['Export'] != null){
+  if(topCountry['Import'] != null && topCountry['Export'] != null  && globalProducts['Import'] != null  && globalProducts['Export'] != null){
+    $('.loader').addClass('hidden')
+    $('.row').removeClass('hidden')
     startViews()
   }else{
     setTimeout(checkReady, 250)
@@ -99,8 +102,6 @@ function open(){
     getSumProducts(products, 'Import');  //set globalProducts
     getCountryTradeTop('Export');
     getCountryTradeTop('Import');
-    $('.loader').addClass('hidden')
-    $('.row').removeClass('hidden')
   })
 }
 
