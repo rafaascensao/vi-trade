@@ -42,15 +42,17 @@ function startViews(){
   refreshDropdownlist()
   $('.timeline .buttons > div:last-child input').focusin(function(){
     $('.timeline .buttons > div:last-child > .list').removeClass('unlisted')
+    $('.timeline .buttons > div:last-child input').attr('value','')
   })
   $('.timeline .buttons > div:last-child input').focusout(function(){
     $('.timeline .buttons > div:last-child > .list').addClass('unlisted')
+    $('.timeline .buttons > div:last-child input').attr('value',selectedCountry)
   })
   $('.timeline .buttons > div:last-child > .list .item').click(function(){
     $('.timeline .buttons > div:last-child > .list .item').removeClass('selected')
     var isoCode = $(this).attr('iso')
     $(this).addClass('selected')
-    $('.timeline .buttons > div:last-child input').attr('value',$(this).text())
+    //$('.timeline .buttons > div:last-child input').attr('value',$(this).text())
     var geography =  {};
     geography.properties = {name: $(this).text() , iso: isoCode }
     mapObj.clickCountry(geography)

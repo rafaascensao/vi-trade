@@ -252,6 +252,7 @@ function createMap(type){
   }
   mapObj.clickCountry = function(geography){
     selectedCountry = geography.properties.name
+    $('.timeline .buttons > div:last-child input').attr('value',selectedCountry)
     selectedCode = geography.properties.iso
     checkFirstTime()
     if( $(".timeline .buttons .toggle-button .options").first().find('p').first().hasClass('hidden-class') )
