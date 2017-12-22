@@ -1050,24 +1050,26 @@ function getKeyByValue(object, value) {
 
 
 function getCountryTradeEx(country, year, product, top) {
-    d3.csv("../../dataGather/relationaltrade.csv", function(data){
-        console.log("Computing relationaltrade " + product)
+    var filename="../../dataGather/traderel/"+product+"trade"+year.toString()+".csv"
+    console.log(filename)
+    d3.csv(filename, function(data){
      	  var count = []
         countries.forEach(function(c){
-          countryyeardata=data.filter(function(element){
-            return element["Reporter Name"] == country && element["Partner Name"] == c && element["Product Group"] == product;
-          })
-          console.log("Partner:" + c)
+          if (flow=="Export"){
+            countryyeardata=data.filter(function(element){
+              return element["Reporter Name"] == country && element["Partner Name"] == c;
+            })}
+          else {
+            countryyeardata=data.filter(function(element){
+              return element["Reporter Name"] == c && element["Partner Name"] == country;
+            })
+          }
           if (c != " World" && c != "European Union"){
             if(typeof countryyeardata[0] === 'undefined') {
-              //count[c] = 0
               count.push({'Partner' : c, 'Trade_value': 0})
-              //console.log("Partner: "+ c + "; Product Group: " + product + "; Year: " + year + "; Export Value: "+ 0)
             }
             else{
-              //count[c] = countryyeardata[0][year]
-              count.push({'Partner' : c, 'Trade_value': countryyeardata[0][year]})
-              //console.log("Partner: "+ c + "; Product Group: " + product + "; Year: " + year + "; Export Value: "+countryyeardata[0][year])
+              count.push({'Partner' : c, 'Trade_value': parseFloat(countryyeardata[0][year])})
             }
           }
 
