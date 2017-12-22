@@ -199,7 +199,12 @@ function createMap(type){
     },
     done: function(datamap){
       interactMap(datamap)
-    }
+    }/*,
+    "geographyConfig" :
+      {popupTemplate: function(geo, data){
+        return "<div class=hoverinfo><strong>A:: "+geography.properties.name+"</strong></div>"
+      }
+    }*/
   });
 
   mapObj.updateMap = function(type){

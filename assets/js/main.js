@@ -504,6 +504,16 @@ function DotMatrixChart(data,options){
                           .transition()
                           .duration(50)
                           .attr("r",radius + 4)
+                      chartObj.svg.selectAll('path.line.'+d["category"].split(' ').join('_'))
+                                  .transition()
+                                  .duration(100)
+                                  .style("stroke-width","6px")
+
+                      clevChart.svg.selectAll('circle.'+d["category"].split(' ').join('_'))
+                                  .transition()
+                                  .duration(100)
+                                  .style("stroke","black")
+                                  .style("stroke-width","1px")
                       val = svg.select(".circles").selectAll("circle."+d["category"].split(' ').join('_'))[0].length * dot
                       tooltip
                         .style("left", d3.event.pageX - 50 + "px")
@@ -518,6 +528,16 @@ function DotMatrixChart(data,options){
                           .transition()
                           .duration(50)
                           .attr("r",radius)
+                      chartObj.svg.selectAll('path.line.'+d["category"].split(' ').join('_'))
+                                  .transition()
+                                  .duration(100)
+                                  .style("stroke-width","2px")
+
+                      clevChart.svg.selectAll('circle.'+d["category"].split(' ').join('_'))
+                                  .transition()
+                                  .duration(100)
+                                  .style("stroke","black")
+                                  .style("stroke-width","0px")
                       tooltip.style("display", "none")
                     })
 
@@ -741,7 +761,7 @@ function makeLineChart(dataset, xName, yObjs, axisLables){
     // Draw Lines
     for (var y  in yObjs) {
       stroke_color = "rgb("+productsColors[products.indexOf(y)][0]+","+productsColors[products.indexOf(y)][1]+","+productsColors[products.indexOf(y)][2]+")"
-      yObjs[y].path = chartObj.svg.append("path").datum(chartObj.data).attr("class", "line").attr("d", yObjs[y].line).style("stroke", stroke_color /*productsColors[products.indexOf(y)]*/).style("stroke-width", "2px").attr("data-series", y).on("mouseover", function () {
+      yObjs[y].path = chartObj.svg.append("path").datum(chartObj.data).attr("class", "line "+y.split(' ').join('_')).attr("d", yObjs[y].line).style("stroke", stroke_color /*productsColors[products.indexOf(y)]*/).style("stroke-width", "2px").attr("data-series", y).on("mouseover", function () {
           focus.style("display", null);
       }).on("mouseout", function () {
           focus.transition().delay(700).style("display", "none");
@@ -996,7 +1016,7 @@ function clevelandDotPlot(){
     clevChart.minorDots = clevChart.svg.selectAll("circle.y1990")
 						.data(clevChart.data)
 						.enter()
-						.append("circle");
+						.append("circle")
 
     clevChart.minorDots.attr("class", "y1990")
 					.attr("cx", function(d) {
@@ -1006,6 +1026,7 @@ function clevelandDotPlot(){
 					.attr("cy", function(d) {
 						return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
 					})
+          .attr("class", function(d){ return "y1990 "+d.name.split(' ').join('_')})
 					.style("stroke", function(d){
 						if (d.name === "The World") {
 							return "black";
@@ -1037,6 +1058,7 @@ function clevelandDotPlot(){
 			.attr("cy", function(d) {
 				return clevChart.yScale(d.name) + clevChart.yScale.rangeBand()/2;
 			})
+      .attr("class", function(d){ return "y2015 "+d.name.split(' ').join('_')})
 			.style("stroke", function(d){
 				if (d.name === "The World") {
 					return "black";
