@@ -3,7 +3,7 @@ var dataset;
 var countries_map;
 var min_year = 1989, max_year = 2015;
 var year = 2004;
-var selectedCountry = "China"
+var selectedCountry = ""
 var selectedCode = "CHN";
 var countries;
 var flow = "Import"

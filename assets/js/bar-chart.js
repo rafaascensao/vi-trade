@@ -13,10 +13,10 @@ function startBarchart(){
   });
   var colors = ['#0000b4','#0082ca','#0094ff','#0d4bcf','#0066AE','#074285','#00187B','#285964','#405F83','#416545','#4D7069','#6E9985','#7EBC89','#0283AF','#79BCBF','#99C19E'];
 
-  var w = $('.bar-chart_container').width() - 10
-  var h = $('.bar-chart_container').height()
+  var w = $('.bar-chart_container').width() - 30
+  var h = $('.bar-chart_container').height() + 30
   var padding_left = 70
-  var padding_bottom = 15
+  var padding_bottom = 20
   var xscale = d3.scale.linear()
                  .domain([0,l.length])
                  .range([0,h-padding_bottom])
@@ -48,7 +48,10 @@ function startBarchart(){
     svg.select("#country_axis").call(xaxis)
     .selectAll(".tick text")
     .call(wrap, padding_left)
+
     svg.select("#dollars_axis").call(yaxis)
+    .append("text")
+
 
     svg.selectAll("rect")
       .data(l)
@@ -92,6 +95,11 @@ function startBarchart(){
       .attr("transform","translate("+padding_left+","+(h-(padding_bottom*1.5))+")")
       .attr("id","dollars_axis")
       .call(yaxis)
+      .text("Millions $")
+      .attr("x", (w / 2)-30)
+      .attr("y", 30)
+      .style("text-anchor","middle")
+
 
 
     tooltip = d3.select("body").append("div").attr("class", "toolTip");
@@ -103,6 +111,7 @@ function startBarchart(){
         .selectAll("text")
         .attr("font-size","12px")
         .call(wrap, padding_left)
+
 
     svg.selectAll("rect")
       .data(l)

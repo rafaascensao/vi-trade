@@ -35,26 +35,43 @@ function startTimeline(){
   });
   $('.timeline .slider .slide').append("<div class='left-slide'><div class='min-max-year'>1989</div></div><div class='right-slide'><div class='min-max-year'>2015</div></div>")
   $('.timeline .slider .slide span').append("<div class='year'></div>")
+  for(var i = min_year+3 ; i < max_year ; i+= 5){
+    var scale = d3.scale.linear().range([0, 100]).domain([1989, 2015])
+    $('.timeline .slider .slide').append("<div style='left:"+scale(i)+"%; position:absolute;height:10px;width:2px;background:black;top:-4px;'><p style='position:absolute; left:-17px; top:8px;'>"+i+"</p></div>    ")
+  }
   $( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );
   $('.timeline .slider .slide span .year').text(year+'')
 
   function toggleButtons(){
     $(this).parent().find('p').toggleClass('hidden-class')
     if($(this).parent().find('p:not(.hidden-class)').text() == "Country"){
-      currentView = "Country"
-      toggleViews()
+      if( $('.timeline .buttons > div:last-child input').val() == 0){
+        alert("Please select a country!")
+        $(this).parent().find('p').toggleClass('hidden-class')
+      }else{
+        currentView = "Country"
+        toggleViews()
+      }
     }else if ($(this).parent().find('p:not(.hidden-class)').text() == "Product") {
       currentView = "Product"
       toggleViews()
       refreshBarChart();
     }else if  ($(this).parent().find('p:not(.hidden-class)').text() == "Export"){
       flow = "Export"
-      checkFirstTime()
-      refreshViews()
+      if(currentView != "Product"){
+        checkFirstTime()
+        refreshViews()
+      }else{
+        refreshBarChart()
+      }
     }else if  ($(this).parent().find('p:not(.hidden-class)').text() == "Import"){
       flow = "Import"
-      checkFirstTime()
-      refreshViews()
+      if(currentView != "Product"){
+        checkFirstTime()
+        refreshViews()
+      }else{
+        refreshBarChart()
+      }
     }
     mapObj.updateMap(currentView)
   }
