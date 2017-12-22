@@ -28,7 +28,8 @@ function startTimeline(){
       //
       refreshBarChart()
       refreshDotMatrixChart(selectedCountry,chart_options)
-      clevChart.update(generateDataDot(selectedCountry, " World",year))
+      if(!firstTime)
+        clevChart.update(generateDataDot(selectedCountry, " World",year))
 
     }
   });
