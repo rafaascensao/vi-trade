@@ -6,6 +6,9 @@
 .row{
   transition: opacity 950ms ease-in-out, z-index 1500ms ease-in-out;
 }
+body{
+  font-family: sans-serif;
+}
 .cont{
   position: relative;
   width: 100%;
@@ -60,6 +63,7 @@
 .description{
   margin-bottom: 10px;
   max-width: 1600px;
+  background: white;
 }
 
 .description > div.selected,
@@ -143,7 +147,23 @@
   text-transform: uppercase;
   margin-bottom: 0px;
   margin-left: -20px;
+  margin-top: 40px;
   font-weight: 700;
+}
+.dot_matrix_chart h1 .legend_circle{
+  width: 15px;
+  height: 15px;
+  float: left;
+  background: red;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+.dot_matrix_chart h1 > div{
+  width: 100%;
+margin-left: 35%;
+float: left;
+text-align: center;
+margin-right: 50%;
 }
 @-webkit-keyframes spin {
   0% { -webkit-transform: rotate(0deg); }

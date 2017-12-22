@@ -2,6 +2,15 @@
     color: #6699FF;
     display: inline;
   }
+    .cleveland_dot_plot h1{
+      font-size: 15px;
+      text-align: center;
+      text-transform: uppercase;
+      margin-bottom: 0px;
+      margin-left: 0px;
+      margin-top: 5px;
+      font-weight: 700;
+    }
   .cleveland_dot_plot   div.y1990 {
     color: orange;
     display: inline;

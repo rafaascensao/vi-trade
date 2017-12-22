@@ -1,3 +1,15 @@
+.line_chart h1{
+  font-size: 15px;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 0px;
+  margin-left: 0px;
+  margin-top: 5px;
+  font-weight: 700;
+}
+.line_chart{
+      background: rgba(255, 255, 255,0.8)
+}
 .chart-wrapper {
     margin: 0 auto;
 }
@@ -79,7 +91,9 @@
   fill: none;
   pointer-events: all;
 }
-
+.chart-wrapper .focus text{
+  background: white;
+}
 .chart-wrapper .focus circle {
   fill: crimson;
   stroke: crimson;
@@ -87,9 +101,10 @@
   fill-opacity: 15%;
 }
 .chart-wrapper .focus rect {
-    fill: lightblue;
-    opacity: 0.4;
-    border-radius: 2px;
+    fill: white;
+    opacity: 1;
+    border-radius: 0px;
+
 }
 .chart-wrapper .focus.line {
     stroke: steelblue;
