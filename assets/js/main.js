@@ -122,6 +122,7 @@ function open(){
     })
   }
 }*/
+
 function getCountryTradeTop(country, year, top) {
     var filename="../../dataGather/traderel/trade"+year.toString()+".csv"
     var countryyeardata=[]
@@ -169,10 +170,9 @@ function getCountryTradeTop(f) {
             console.log("TOP YEAR: " + i)
             var top_fifteen = {};
             countries.forEach(function(country){
-              console.log(country)
               var value = {};
                 results = data.filter(function(element){
-                  return element["Reporter Name"] == country && element["Trade Flow"] == f;
+                  return element["Reporter Name"] == country && element["Trade Flow"] == f && element["Year"] == i.toString();
                 })
                 results.forEach(function(result){
                   value[result['Partner Name']] = [result['Value'], result['Product Group']]
