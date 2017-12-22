@@ -412,14 +412,17 @@ function DotMatrixChart(data,options){
   var xScale = d3.scale.linear().range([0,w])
   var yScale = d3.scale.linear().range([0,h])
   var svg;
+  var tooltip;
   if( $(".dot_matrix_chart svg").length == 0 ){
     svg = d3.select(".dot_matrix_chart")
                 .append("svg")
                 .attr("width", w)
                 .attr("height", h)
+    tooltip = d3.select("body").append("div").attr("class", "toolTip2");
   }else{
     var svg = d3.select(".dot_matrix_chart svg")
     svg.select(".circles").remove()
+    tooltip = d3.select(".toolTip2");
   }
   svg.append("g")
       .attr("class","circles")
@@ -458,6 +461,13 @@ function DotMatrixChart(data,options){
                           .transition()
                           .duration(50)
                           .attr("r",radius + 4)
+                      val = svg.select(".circles").selectAll("circle."+d["category"].split(' ').join('_'))[0].length * dot
+                      tooltip
+                        .style("left", d3.event.pageX - 50 + "px")
+                        .style("top", d3.event.pageY - 70 + "px")
+                        .style("display", "inline-block")
+                        .html(d["category"]+" is "+parseInt(val/1000)+ " Millions($) in "+year)
+
 
                     })
                     .on("mouseout", function(d){
@@ -465,6 +475,7 @@ function DotMatrixChart(data,options){
                           .transition()
                           .duration(50)
                           .attr("r",radius)
+                      tooltip.style("display", "none")
                     })
 
   var transitions = svg.select(".circles")
