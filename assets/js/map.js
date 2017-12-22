@@ -290,10 +290,10 @@ function createMap(type){
     if( $(".timeline .buttons .toggle-button .options").first().find('p').first().hasClass('hidden-class') )
       $(".timeline .buttons .toggle-button .options").first().find('p').toggleClass('hidden-class')
 
-    /*origin = geography.properties.iso
+    origin = geography.properties.iso
     destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
-    mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))*/
-    getCountryTradeTop(selectedCountry, year, 10)
+    mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))
+    //getCountryTradeTop(selectedCountry, year, 10)
     clevChart.update(generateDataDot(selectedCountry, " World",year))
     if(currentView == 'Product'){
       currentView = 'Country';
@@ -308,7 +308,7 @@ function createMap(type){
   mapObj.createOriginDestinationList = function(origin, destinations){
   	res = [];
   	destinations.forEach(function(el){
-      res.push({ origin: countriesCodes[origin],/* destination: el})*/ destination: countriesCodes[el.destination] , value: el.val , product: el.product})
+      res.push({ origin: origin, destination: el})// destination: countriesCodes[el.destination] , value: el.val , product: el.product})
   	});
   	return res
   }
@@ -324,11 +324,11 @@ function createMap(type){
 
     newArcs.forEach(function(el){
       el.options = { strokeWidth: stroke_width -= 0.5 ,
-                      strokeColor: convertColorToString(productsColors[products.indexOf(el.product)]),
-                      trade: {product : el.product,
-                              value: el.value,
-                              from : el.origin,
-                              to:  el.destination }
+                      strokeColor: convertColorToString(productsColors[i]),//products.indexOf(el.product)]),
+                      trade: {product : "Wood",//el.product,
+                              value: 23123223.233,//el.value,
+                              from : "Portugal",//el.origin,
+                              to:  "Spain"}//el.destination }
                     }
       i++;
     })
