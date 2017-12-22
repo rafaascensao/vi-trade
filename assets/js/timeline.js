@@ -28,7 +28,8 @@ function startTimeline(){
       //
       refreshBarChart()
       refreshDotMatrixChart(selectedCountry,chart_options)
-      clevChart.update(generateDataDot(selectedCountry, " World",year))
+      if(!firstTime)
+        clevChart.update(generateDataDot(selectedCountry, " World",year))
 
     }
   });
@@ -86,4 +87,16 @@ function toggleViews(){
     $('#bar_chart svg > *').remove();
     $('.description').addClass('country-view')
   }
+}
+
+function filterCountries(){
+  var that = this, $allListElements = $('.timeline .buttons > div:last-child > .list .item');
+
+  var $matchingListElements = $allListElements.filter(function(i, li){
+      var listItemText = $(li).text().toUpperCase(), searchText = that.value.toUpperCase();
+      return ~listItemText.indexOf(searchText);
+  });
+
+  $allListElements.hide();
+  $matchingListElements.show();
 }

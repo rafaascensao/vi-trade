@@ -243,30 +243,33 @@ function createMap(type){
       	datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
     }
     datamap.svg.selectAll('.datamaps-subunit').on('click', function(geography) {
-      selectedCountry = geography.properties.name
-      selectedCode = geography.properties.iso
-      console.log("Going to checkFirstTime from clicked element on map")
-      checkFirstTime()
-      if( $(".timeline .buttons .toggle-button .options").first().find('p').first().hasClass('hidden-class') )
-        $(".timeline .buttons .toggle-button .options").first().find('p').toggleClass('hidden-class')
-
-      origin = geography.properties.iso
-      destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
-      mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))
-      clevChart.update(generateDataDot(selectedCountry, " World",year))
-      if(currentView == 'Product'){
-        currentView = 'Country';
-        // REFRESH DOT MATRIX PLOT
-        toggleViews()
-      }
-      refreshDotMatrixChart(selectedCountry,chart_options)
-      getLineData(selectedCountry,min_year,max_year)
-      mapObj.updateMap(currentView)
+      mapObj.clickCountry(geography)
 
 
     //  console.log(geography.properties.name);
     //  console.log(geography)
     });
+  }
+  mapObj.clickCountry = function(geography){
+    selectedCountry = geography.properties.name
+    $('.timeline .buttons > div:last-child input').attr('value',selectedCountry)
+    selectedCode = geography.properties.iso
+    checkFirstTime()
+    if( $(".timeline .buttons .toggle-button .options").first().find('p').first().hasClass('hidden-class') )
+      $(".timeline .buttons .toggle-button .options").first().find('p').toggleClass('hidden-class')
+
+    origin = geography.properties.iso
+    destinations = ['HRV','SOM','LSO','BRA','USA','RUS','CHN','ESP']
+    mapObj.refreshArcs(mapObj.createOriginDestinationList(origin, destinations))
+    clevChart.update(generateDataDot(selectedCountry, " World",year))
+    if(currentView == 'Product'){
+      currentView = 'Country';
+      // REFRESH DOT MATRIX PLOT
+      toggleViews()
+    }
+    refreshDotMatrixChart(selectedCountry,chart_options)
+    getLineData(selectedCountry,min_year,max_year)
+    mapObj.updateMap(currentView)
   }
   /* ARCS */
   mapObj.createOriginDestinationList = function(origin, destinations){

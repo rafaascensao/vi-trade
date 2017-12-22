@@ -39,10 +39,36 @@ function startViews(){
   mapObj = createMap()
   $('.description > div.selected').click()
   startBarchart()
+  refreshDropdownlist()
+  $('.timeline .buttons > div:last-child input').focusin(function(){
+    $('.timeline .buttons > div:last-child > .list').removeClass('unlisted')
+    $('.timeline .buttons > div:last-child input').attr('value','')
+  })
+  $('.timeline .buttons > div:last-child input').focusout(function(){
+    $('.timeline .buttons > div:last-child > .list').addClass('unlisted')
+    $('.timeline .buttons > div:last-child input').attr('value',selectedCountry)
+  })
+  $('.timeline .buttons > div:last-child > .list .item').click(function(){
+    $('.timeline .buttons > div:last-child > .list .item').removeClass('selected')
+    var isoCode = $(this).attr('iso')
+    $(this).addClass('selected')
+    //$('.timeline .buttons > div:last-child input').attr('value',$(this).text())
+    var geography =  {};
+    geography.properties = {name: $(this).text() , iso: isoCode }
+    mapObj.clickCountry(geography)
+  })
+
+  $('.timeline .buttons > div:last-child input').keyup(filterCountries)
 
 
 }
-
+function refreshDropdownlist(){
+  var countries = Datamap.prototype.worldTopo.objects.world.geometries;
+  for (var i = 0, j = countries.length; i < j; i++) {
+    item = '<div iso="'+countries[i].properties.iso+'" class="item">'+countries[i].properties.name+'</div>'
+    $('.timeline .buttons > div:last-child > .list').append(item)
+  }
+}
 function checkReady(){
   if(globalProducts['Import'] != null && globalProducts['Export'] != null){
     startViews()
