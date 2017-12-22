@@ -59,8 +59,10 @@ function startViews(){
     mapObj.clickCountry(geography)
   })
 
-  $('.timeline .buttons > div:last-child input').keyup(filterCountries)
+  refreshTitleBarChart()
 
+  // TITLE BARCHART
+  $('.bar-chart_container > h1').html("Top 15 Countries for " + getSelectedProduct() )
 
 }
 function refreshDropdownlist(){
@@ -69,6 +71,15 @@ function refreshDropdownlist(){
     item = '<div iso="'+countries[i].properties.iso+'" class="item">'+countries[i].properties.name+'</div>'
     $('.timeline .buttons > div:last-child > .list').append(item)
   }
+}
+function refreshTitleDotMatrix(){
+  $('.dot_matrix_chart h1').html('AMOUNT EXCHANGED OF EACH PRODUCT <div><div class="legend_circle"></div> <div style="width: 35%;float: left;text-align: left;">= '+parseInt(dot / 1000)+' Millions ($)</div></div>')
+}
+function refreshTitleBarChart(){
+  $('.bar-chart_container > h1').html("Top 15 Countries for " + getSelectedProduct() )
+}
+function refreshTitleClevChart(){
+  $('.cleveland_dot_plot h1').html("TRADE COMPARISON BETWEEN "+clevChart.country1+" AND "+clevChart.country2)
 }
 function checkReady(){
   if(globalProducts['Import'] != null && globalProducts['Export'] != null){
@@ -443,14 +454,17 @@ function DotMatrixChart(data,options){
   var xScale = d3.scale.linear().range([0,w])
   var yScale = d3.scale.linear().range([0,h])
   var svg;
+  var tooltip;
   if( $(".dot_matrix_chart svg").length == 0 ){
     svg = d3.select(".dot_matrix_chart")
                 .append("svg")
                 .attr("width", w)
                 .attr("height", h)
+    tooltip = d3.select("body").append("div").attr("class", "toolTip2");
   }else{
     var svg = d3.select(".dot_matrix_chart svg")
     svg.select(".circles").remove()
+    tooltip = d3.select(".toolTip2");
   }
   svg.append("g")
       .attr("class","circles")
@@ -473,6 +487,7 @@ function DotMatrixChart(data,options){
                     .enter()
                     .append("circle")
                     .attr("fill", function(d){ return "rgb("+productsColors[products.indexOf(d["category"])][0]+","+productsColors[products.indexOf(d["category"])][1]+","+productsColors[products.indexOf(d["category"])][2]+")" })
+                    .attr("class", function(d){ return d["category"].split(' ').join('_')})
                     .attr("r",0)
                     .attr("cx", function(d,i){
                        x = i / num_columns
@@ -483,17 +498,39 @@ function DotMatrixChart(data,options){
                        x = Math.floor(i / num_columns) - 1
                        return x * (radius * 3)
                     })
+                    .on("mousemove", function(d){
+                      svg.select(".circles").selectAll("circle."+d["category"].split(' ').join('_'))
+                          .transition()
+                          .duration(50)
+                          .attr("r",radius + 4)
+                      val = svg.select(".circles").selectAll("circle."+d["category"].split(' ').join('_'))[0].length * dot
+                      tooltip
+                        .style("left", d3.event.pageX - 50 + "px")
+                        .style("top", d3.event.pageY - 70 + "px")
+                        .style("display", "inline-block")
+                        .html(d["category"]+" is "+parseInt(val/1000)+ " Millions($) in "+year)
+
+
+                    })
+                    .on("mouseout", function(d){
+                      svg.select(".circles").selectAll("circle."+d["category"].split(' ').join('_'))
+                          .transition()
+                          .duration(50)
+                          .attr("r",radius)
+                      tooltip.style("display", "none")
+                    })
 
   var transitions = svg.select(".circles")
                       .selectAll("circle")
                       .data(list)
                       .transition()
-                      .duration(500)
+                      .duration(100)
                       .attr("r",radius)
 }
 
 function refreshDotMatrixChart(country, options){
   startDataDotMatrix(country,options)
+  refreshTitleDotMatrix()
 }
 function startDataDotMatrix(country,options) {
   var w = $('.dot_matrix_chart').width()
@@ -722,8 +759,8 @@ function makeLineChart(dataset, xName, yObjs, axisLables){
     for (var y  in yObjs) {
       yObjs[y].tooltip = focus.append("g");
       yObjs[y].tooltip.append("circle").attr("r", 5);
-      yObjs[y].tooltip.append("rect").attr("x", 8).attr("y","-5").attr("width",22).attr("height",'0.75em');
-      yObjs[y].tooltip.append("text").attr("x", 9).attr("dy", ".35em");
+      yObjs[y].tooltip.append("rect").attr("x", 8).attr("y","-5").attr("width",25).attr("height",'0.75em');
+      yObjs[y].tooltip.append("text").attr("x", 9).attr("dy", ".35em").style("background","white");
     }
 
     // Year label
@@ -755,7 +792,7 @@ function makeLineChart(dataset, xName, yObjs, axisLables){
       } catch (e) { return;}
       minY = chartObj.height;
       for (var y  in yObjs) {
-          yObjs[y].tooltip.attr("transform", "translate(" + chartObj.xScale(chartObj.xFunct(d)) + "," + chartObj.yScale(yObjs[y].yFunct(d)) + ")");
+          yObjs[y].tooltip.attr("transform", "translate(" + chartObj.xScale(chartObj.xFunct(d)) + "," + chartObj.yScale(yObjs[y].yFunct(d)) + ")").style("background","white");
           yObjs[y].tooltip.select("text").text(chartObj.yFormatter(yObjs[y].yFunct(d)));
           minY = Math.min(minY, chartObj.yScale(yObjs[y].yFunct(d)));
       }
@@ -903,6 +940,7 @@ function clevelandDotPlot(){
       clevChart.svg.remove()
     clevChart.appendChart()
     clevChart.render()
+    refreshTitleClevChart()
   }
 
   clevChart.render = function(){
@@ -980,7 +1018,7 @@ function clevelandDotPlot(){
           })
 					.append("title")
 					.text(function(d) {
-						return d.name + " in 1990: " + d.min + "%"; //MENOR NUMERO
+						return d.name + " in "+year+" by "+d.min_country+": " + parseInt(d.min) + " Millions ($)"; //MENOR NUMERO
 					});
 
     // Make the dots for 2015
@@ -1011,7 +1049,7 @@ function clevelandDotPlot(){
       })
 			.append("title")
 			.text(function(d) {
-				return d.name + " in 2015: " + d.max + "%"; // MAIOR NUMERO
+				return d.name + " in "+year+" by "+d.max_country+": " + parseInt(d.max) + " Millions ($)"; // MAIOR NUMERO
 			});
 
 
@@ -1115,6 +1153,7 @@ function wrap (text, width) {
 function getKeyByValue(object, value) {
   return Object.keys(object).find(key => object[key] === value);
 }
+
 
 
 

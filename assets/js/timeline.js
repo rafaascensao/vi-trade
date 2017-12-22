@@ -63,6 +63,8 @@ function startTimeline(){
     $(this).addClass('selected')
     mapObj.fillCloropleth($(this).attr('product'))
     refreshBarChart()
+    refreshTitleBarChart()
+
   }
 }
 function checkFirstTime(){
