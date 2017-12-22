@@ -65,7 +65,7 @@ function startBarchart(){
                  .style("left", d3.event.pageX - 50 + "px")
                  .style("top", d3.event.pageY - 70 + "px")
                  .style("display", "inline-block")
-                 .html(val+" US($) Millions");
+                 .html(val+" US($) Billions");
            })
        		.on("mouseout", function(d){ tooltip.style("display", "none");});
 
@@ -96,7 +96,7 @@ function startBarchart(){
       .attr("id","dollars_axis")
       .call(yaxis)
       .append("text")
-      .text("Millions $")
+      .text("Billions $")
       .attr("x", (w / 2)-30)
       .attr("y", 30)
       .style("text-anchor","middle")
