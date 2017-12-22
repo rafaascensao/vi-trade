@@ -12,7 +12,7 @@ var products = ["Textiles and Clothing","Wood","Minerals","Food Products", "Chem
 //var productfile = {"Textiles and Clothing", "Wood","Minerals","Food Products", "Chemicals", "Plastic or Rubber","Animal", "Fuels", "Mach and Elec"}
 var globalProducts = {};
 var countriesCodes = {};
-var topCountry = {}
+var topCountry = {};
 var clevChart;
 var productsColors = [[42,147,0],[102,51,0],[15,125,111],[0,51,153],[158,158,0],[112,48,160],[192,0,0],[255,153,0],[220,87,220]]
 var chart_options = {
@@ -123,23 +123,23 @@ function open(){
   }
 }*/
 function getCountryTradeTop(f) {
-    years = {}
+    var years = {};
     for(i=min_year; i<=max_year; i++){
         var filename="../../dataGather/top/"+"top"+year.toString()+".csv"
-        top = {}
-        d3.csv(filename, function(d){
+        var top_fifteen = {};
+        d3.csv(filename, function(data){
           countries.forEach(function(country){
-                value = {}
-                results = d.filter(function(element){
+                var value = {};
+                results = data.filter(function(element){
                   return element["Reporter Name"] == country && element["Trade Flow"] == f;
                 })
                 results.forEach(function(result){
                   value[result['Partner Name']] = [result['Value'], result['Product Group']]
                 })
-                top[country] = value
+                top_fifteen[country] = value
           })
         })
-        years[i] = top
+        years[i] = top_fifteen
       }
       topCountry[f] = years
 }
