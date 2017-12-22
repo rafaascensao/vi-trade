@@ -83,7 +83,7 @@ function refreshTitleClevChart(){
   $('.cleveland_dot_plot h1').html("TRADE COMPARISON BETWEEN "+clevChart.country1+" AND "+clevChart.country2)
 }
 function checkReady(){
-  if(topCountry['Import'] != null && topCountry['Export'] != null  && globalProducts['Import'] != null  && globalProducts['Export'] != null){
+  if(globalProducts['Import'] != null  && globalProducts['Export'] != null){
     $('.loader').addClass('hidden')
     $('.row').removeClass('hidden')
     startViews()
@@ -100,8 +100,8 @@ function open(){
     generateCodesDic();        //set countriesCodes[country]
     getSumProducts(products, 'Export');
     getSumProducts(products, 'Import');  //set globalProducts
-    getCountryTradeTop('Export');
-    getCountryTradeTop('Import');
+    //getCountryTradeTop('Export');
+    //getCountryTradeTop('Import');
   })
 }
 
