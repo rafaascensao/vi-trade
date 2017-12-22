@@ -122,6 +122,45 @@ function open(){
     })
   }
 }*/
+function getCountryTradeTop(country, year, top) {
+    var filename="../../dataGather/traderel/trade"+year.toString()+".csv"
+    var countryyeardata=[]
+    //console.log(filename)
+    d3.csv(filename, function(data){
+     	var count = []
+      products.forEach(function(prod){
+        countries.forEach(function(c){
+          if (flow=="Export"){
+            countryyeardata=data.filter(function(element){
+              return element["Reporter Name"] == country && element["Partner Name"] == c && element["Product Group"] == prod;
+            })}
+          else {
+            countryyeardata=data.filter(function(element){
+              return element["Reporter Name"] == c && element["Partner Name"] == country && element["Product Group"] == prod;
+            })
+          }
+          if (c != " World" && c != "European Union"){
+            //console.log(countryyeardata[0])
+            if(typeof countryyeardata[0] === 'undefined') {
+              var pair=[0, 0]
+              count.push({'Partner' : c, 'Trade_value': pair})
+            }
+            else{
+              var pair=[parseFloat(countryyeardata[0][year]), countryyeardata[0]["Product Group"]]
+              count.push({'Partner' : c, 'Trade_value': pair})
+              //console.log({'Partner' : c, 'Trade_value': pair})
+            }
+          }
+
+        })
+      })
+        //console.log(countryyeardata)
+      count.sort(function(a,b){return parseFloat(b.Trade_value[0])- parseFloat(a.Trade_value[0])});
+      console.log(count.slice(0,top))
+      return count.slice(0,top)
+    })
+}
+/*
 function getCountryTradeTop(f) {
     var filename="../../dataGather/top/"+"top.csv"
         d3.csv(filename, function(data){
@@ -144,9 +183,8 @@ function getCountryTradeTop(f) {
         }
         topCountry[f] = years
       })
-
-      }
-
+}
+*/
 //set countriesCodes[country]
 function generateCodesDic(){
   d3.csv("../../dataGather/countryCodes.csv", function(data){
@@ -974,6 +1012,28 @@ function clevelandDotPlot(){
                                       .data(clevChart.data)
                                       .enter()
                                       .append("line")
+                                      .on("mousemove", function(d){
+                                         d3.select('.dot_matrix_chart svg').select(".circles").selectAll("circle."+d.name.split(' ').join('_'))
+                                            .transition()
+                                            .duration(50)
+                                            .attr("r",12 + 4)
+
+                                          chartObj.svg.selectAll('path.line.'+d.name.split(' ').join('_'))
+                                                      .transition()
+                                                      .duration(100)
+                                                      .style("stroke-width","6px")
+                                      })
+                                      .on("mouseout", function(d){
+                                        d3.select('.dot_matrix_chart svg').select(".circles").selectAll("circle."+d.name.split(' ').join('_'))
+                                           .transition()
+                                           .duration(50)
+                                           .attr("r",12)
+
+                                       chartObj.svg.selectAll('path.line.'+d.name.split(' ').join('_'))
+                                                   .transition()
+                                                   .duration(100)
+                                                   .style("stroke-width","1px")
+                                      })
 
     clevChart.linesGrid.attr("class", "grid")
                        .attr("x1", clevChart.margin.left)
@@ -991,7 +1051,31 @@ function clevelandDotPlot(){
     clevChart.linesBetween = clevChart.svg.selectAll("lines.between")
     			.data(clevChart.data)
     			.enter()
-    			.append("line");
+    			.append("line")
+          .on("mousemove", function(d){
+             d3.select('.dot_matrix_chart svg').select(".circles").selectAll("circle."+d.name.split(' ').join('_'))
+                .transition()
+                .duration(50)
+                .attr("r",12 + 4)
+
+
+                                                          chartObj.svg.selectAll('path.line.'+d.name.split(' ').join('_'))
+                                                                      .transition()
+                                                                      .duration(100)
+                                                                      .style("stroke-width","6px")
+          })
+          .on("mouseout", function(d){
+            d3.select('.dot_matrix_chart svg').select(".circles").selectAll("circle."+d.name.split(' ').join('_'))
+               .transition()
+               .duration(50)
+               .attr("r",12)
+
+
+                                                         chartObj.svg.selectAll('path.line.'+d.name.split(' ').join('_'))
+                                                                     .transition()
+                                                                     .duration(100)
+                                                                     .style("stroke-width","1px")
+          })
 
     clevChart.linesBetween.attr("class", "between")
   				.attr("x1", function(d) {
@@ -1020,6 +1104,28 @@ function clevelandDotPlot(){
 						.data(clevChart.data)
 						.enter()
 						.append("circle")
+            .on("mousemove", function(d){
+               d3.select('.dot_matrix_chart svg').select(".circles").selectAll("circle."+d.name.split(' ').join('_'))
+                  .transition()
+                  .duration(50)
+                  .attr("r",12 + 4)
+
+                                                            chartObj.svg.selectAll('path.line.'+d.name.split(' ').join('_'))
+                                                                        .transition()
+                                                                        .duration(100)
+                                                                        .style("stroke-width","6px")
+            })
+            .on("mouseout", function(d){
+              d3.select('.dot_matrix_chart svg').select(".circles").selectAll("circle."+d.name.split(' ').join('_'))
+                 .transition()
+                 .duration(50)
+                 .attr("r",12)
+
+                                                           chartObj.svg.selectAll('path.line.'+d.name.split(' ').join('_'))
+                                                                       .transition()
+                                                                       .duration(100)
+                                                                       .style("stroke-width","1px")
+            })
 
     clevChart.minorDots.attr("class", "y1990")
 					.attr("cx", function(d) {
@@ -1044,14 +1150,37 @@ function clevelandDotPlot(){
 					.append("title")
 					.text(function(d) {
 						return d.name + " in "+year+" by "+d.min_country+": " + parseInt(d.min) + " Millions ($)"; //MENOR NUMERO
-					});
+					})
+
 
     // Make the dots for 2015
 
 		clevChart.maxDots = clevChart.svg.selectAll("circle.y2015")
 				.data(clevChart.data)
 				.enter()
-				.append("circle");
+				.append("circle")
+        .on("mousemove", function(d){
+           d3.select('.dot_matrix_chart svg').select(".circles").selectAll("circle."+d.name.split(' ').join('_'))
+              .transition()
+              .duration(50)
+              .attr("r",12 + 4)
+
+                                                        chartObj.svg.selectAll('path.line.'+d.name.split(' ').join('_'))
+                                                                    .transition()
+                                                                    .duration(100)
+                                                                    .style("stroke-width","6px")
+        })
+        .on("mouseout", function(d){
+          d3.select('.dot_matrix_chart svg').select(".circles").selectAll("circle."+d.name.split(' ').join('_'))
+             .transition()
+             .duration(50)
+             .attr("r",12)
+
+                                                       chartObj.svg.selectAll('path.line.'+d.name.split(' ').join('_'))
+                                                                   .transition()
+                                                                   .duration(100)
+                                                                   .style("stroke-width","1px")
+        });
 
 		clevChart.maxDots.attr("class", "y2015")
 			.attr("cx", function(d) {
@@ -1076,7 +1205,8 @@ function clevelandDotPlot(){
 			.append("title")
 			.text(function(d) {
 				return d.name + " in "+year+" by "+d.max_country+": " + parseInt(d.max) + " Millions ($)"; // MAIOR NUMERO
-			});
+			})
+
 
 
     // add the axes
